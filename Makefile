@@ -38,7 +38,7 @@ CFLAGS += -c -std=gnu99 -W -Wall -Wextra -Wno-unused-value $(CDEBUG)
 LDFLAGS += $(LDEBUG)
 
 OUTFILE ?= $(NAME)
-OBJS =
+OBJS = stack.o util.o
 
 .PHONY: all debug clean install uninstall
 

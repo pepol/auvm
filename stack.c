@@ -1,7 +1,7 @@
 /*
- * stack.c - stack implementation
+ * stack.c - implementation of stacks
  *
- * Copyright (c) 2012 Peter Polacik <polacik.p@gmail.com>
+ * Copyright (c) 2013 Peter Polacik <polacik.p@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,97 +22,148 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-/* Config */
+/* Config file */
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-/* Local */
-#include <auvm.h>
-#include <stack.h>
+/* Local includes */
+#include "auvm.h"
+#include "stack.h"
 
-/* System */
+/* System includes */
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
+#include <stddef.h>
 
-/*
- * DS is implemented as classical array of 8-bit unsigned integers, status
- * is kept using 2 pointers, base pointer (the element 0 of "array") and
- * stack point (pointer to first free element of stack)
- *
- * stack size -> SP - BP
- * push 1B -> stack[SP++] = data
- * pop 1B -> stack[--SP]
- * drop 1B -> SP--
- */
+/* DS */
 
-int ds_init(ds_t *s, uint32_t sz)
+int ds_init(ds_t *s, uint32_t max)
 {
-	s->sz = sz;
-	s->bp = (uint8_t *)malloc(sizeof(uint8_t) * sz);
-	if (s->bp == NULL)
+	s->st_max = max;
+	s->st_count = 0;
+	s->st_data = (uint8_t *)malloc(sizeof(uint8_t) * max);
+	if (s->st_data == NULL)
 		return 1;
-	else {
-		s->sp = s->bp;
+	else
 		return 0;
-	}
 }
 
 int ds_destroy(ds_t *s)
 {
 	int ret;
 
-	ret = (uint32_t) s->sp - (uint32_t) s->bp;
-	s->sz = 0;
-	s->sp = NULL;
-	free(s->bp);
+	ret = s->st_count;
+	s->st_max = 0;
+	s->st_count = 0;
+	free(s->st_data);
 	return ret;
 }
 
 int ds_push(ds_t *s, uint32_t sz, const void *ptr)
 {
-	const uint8_t *src = (const uint8_t *)ptr;
-	uint32_t count = 0;
-	while (sz-- && (ds_size(s) < s->sz)) {
-		*(s->sp++ - 1) = *src++;
+	if ((s->st_count + sz) < s->st_max) {
+		s->st_count += sz;
+		revmemcpy(&(s->st_data[s->st_count - 1]), ptr, sz);
+		return 0;
+	} else return 1;
 }
 
-int ds_pop(ds_t *s, uint32_t sz, void *ptr)
+void *ds_pop(ds_t *s, uint32_t sz)
 {
-	uint8_t *dst = (uint8_t *)ptr;
-	uint32_t count = 0;
-	while (sz-- && ds_size(s)) {
-		*dst++ = *(s->sp-- - 1);
-		count++;
-	}
-
-	return count;
+	void *ret;
+	if (((long)(s->st_count - sz)) >= 0) {
+		ret = &(s->st_data[s->st_count - 1]);
+		s->st_count -= sz;
+		return ret;
+	} else return NULL;
 }
 
-int ds_getelem(ds_t *s, uint32_t sz, uint32_t pos, void *ptr)
+void *ds_getelem(ds_t *s, uint32_t sz, uint32_t pos)
 {
-	uint8_t *dst = (uint8_t *)ptr;
-	uint8_t *src = (uint8_t *)((uint32_t) s->bp + pos);
-	uint32_t count = 0;
-
-	if (pos >= ds_size(s))
-		count = ds_pop(s, sz, ptr);
-	else {
-		while (sz-- && ds_size(s)) {
-			*dst++ = *src--;
-			count++;
-		}
-	}
-	
-	return count;
+	void *ret;
+	if ((((long)(s->st_count - sz)) >= 0)
+			&& (pos < s->st_count)
+			&& (((long)(pos - sz)) >= 0)) {
+		ret = &(s->st_data[pos]);
+		return ret;
+	} else return NULL;
 }
 
 uint32_t ds_size(ds_t *s)
 {
-	return (uint32_t) s->sp - (uint32_t) s->bp;
+	return s->st_count;
 }
 
 uint32_t ds_limit(ds_t *s)
 {
-	return s->sz;
+	return s->st_max;
+}
+
+
+
+/* CS */
+
+int cs_init(cs_t *s, uint32_t max)
+{
+	s->st_max = max;
+	s->st_count = 0;
+	s->st_data = (ip_t *)malloc(sizeof(ip_t) * max);
+	if (s->st_data == NULL)
+		return 1;
+	else
+		return 0;
+}
+
+int cs_destroy(cs_t *s)
+{
+	int ret;
+
+	ret = s->st_count;
+	s->st_max = 0;
+	s->st_count = 0;
+	free(s->st_data);
+	return ret;
+}
+
+int cs_push(cs_t *s, const ip_t *ptr)
+{
+	if ((s->st_count + 1) < s->st_max) {
+		s->st_count++;
+		memcpy(&(s->st_data[s->st_count - 1]), ptr, sizeof(ip_t));
+		return 0;
+	} else return 1;
+}
+
+ip_t *cs_pop(cs_t *s)
+{
+	ip_t *ret;
+	if (((long)(s->st_count - 1)) >= 0) {
+		ret = &(s->st_data[s->st_count - 1]);
+		s->st_count--;
+		return ret;
+	} else return NULL;
+}
+
+ip_t *cs_getelem(cs_t *s, uint32_t pos)
+{
+	ip_t *ret;
+	if ((((long)(s->st_count - 1)) >= 0)
+			&& (pos < s->st_count)
+			&& (((long)(pos - 1)) >= 0)) {
+		ret = &(s->st_data[pos]);
+		return ret;
+	} else return NULL;
+}
+
+uint32_t cs_size(cs_t *s)
+{
+	return s->st_count;
+}
+
+uint32_t cs_limit(cs_t *s)
+{
+	return s->st_max;
 }

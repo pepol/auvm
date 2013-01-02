@@ -1,8 +1,5 @@
-#ifndef _AUVM_H_
-#define _AUVM_H_
-
 /*
- * auvm.h - main include file
+ * util.c - utility functions
  *
  * Copyright (c) 2013 Peter Polacik <polacik.p@gmail.com>
  *
@@ -31,39 +28,17 @@
 #endif
 
 /* Local includes */
-#include "stack.h"
+#include "slvm.h"
 
 /* System includes */
-#include <stdint.h>
 #include <stddef.h>
 
-#define UNUSED(x) (void)(x)
-
-typedef struct _ip {
-	uint32_t addr;
-	uint32_t obj;
-} ip_t;
-
-/* From stack.h */
-typedef struct _ds ds_t;
-typedef struct _cs cs_t;
-
-typedef struct _obj {
-	char *filename;
-	uint8_t type;
-	uint8_t *data;
-} obj_t;
-
-/* VM status structure */
-typedef struct _vm {
-	/* instruction pointers */
-	ip_t *cip;
-	ip_t *nip;
-	/* stack pointers */
-	ds_t *ds;
-	cs_t *cs;
-	/* object table */
-	obj_t *ctbl;
-} vm_t;
-
-#endif /* _SLVM_H_ */
+/* Reversed memory copy function */
+void *revmemcpy(void *dst, const void *src, uint32_t n)
+{
+	const char *sp = (const char *)src;
+	char *dp = (char *)dst;
+	while (n--)
+		*dp-- = *sp++;
+	return dst;
+}
