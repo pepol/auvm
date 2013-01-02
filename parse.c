@@ -1,5 +1,5 @@
 /*
- * util.c - utility functions
+ * parse.c - Instruction parser
  *
  * Copyright (c) 2013 Peter Polacik <polacik.p@gmail.com>
  *
@@ -28,17 +28,43 @@
 #endif
 
 /* Local includes */
+#include "stack.h"
 #include "auvm.h"
 
 /* System includes */
-#include <stddef.h>
+#include <stdlib.h>
 
-/* Reversed memory copy function */
-void *revmemcpy(void *dst, const void *src, uint32_t n)
+int parse(vm_t *vm_status)
 {
-	const char *sp = (const char *)src;
-	char *dp = (char *)dst;
-	while (n--)
-		*dp-- = *sp++;
-	return dst;
+	/* Every opcode is made of 2 parts: OP_NUM (1B) and OP_ARG (1B) */
+	uint8_t op_num, op_arg;
+	uint32_t objno, addr, tmp;
+	in_t func;
+	int ret;
+
+	objno = vm_status->nip->obj;
+	addr = vm_status->nip->addr;
+	in_num = vm_status->ctbl[objno].data[addr];
+	in_arg = vm_status->ctbl[objno].data[addr + 1];
+
+	tmp = addr + 2;
+
+	/* Load-specific section */
+	if (in_num == IN_LOAD) {
+		/* in_arg == number of bytes to push into stack */
+		ret = ds_push(vm_status->ds, in_arg,
+			(const void *)&(vm_status->ctbl[objno].data[tmp]));
+		tmp += in_arg;
+	}
+	
+	/* Update IPs */
+	vm_status->cip = vm_status->nip;
+	vm_status->nip->addr = tmp;
+
+	if (in_num != IN_LOAD) {
+		func = vm_status->in_table[in_num];
+		ret = (*func)(vm_status, in_num, in_arg);
+	}
+
+	return ret;
 }

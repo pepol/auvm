@@ -37,8 +37,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define UNUSED(x) (void)(x)
-
 typedef struct _ip {
 	uint32_t addr;
 	uint32_t obj;
@@ -62,8 +60,17 @@ typedef struct _vm {
 	/* stack pointers */
 	ds_t *ds;
 	cs_t *cs;
+	/* instruction table */
+	in_t *in_table;
 	/* object table */
 	obj_t *ctbl;
 } vm_t;
+
+/* Instruction function type:
+ *  first argument is vm status pointer
+ *  second is opcode
+ *  third is an argument
+ */
+typedef int (*in_t)(vm_t *, uint8_t, uint8_t);
 
 #endif /* _SLVM_H_ */

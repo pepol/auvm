@@ -1,6 +1,6 @@
 # Makefile - Main build makefile for AUVM
 #
-# Copyright (c) 2012 Peter Polacik <polacik.p@gmail.com>
+# Copyright (c) 2013 Peter Polacik <polacik.p@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -38,7 +38,7 @@ CFLAGS += -c -std=gnu99 -W -Wall -Wextra -Wno-unused-value $(CDEBUG)
 LDFLAGS += $(LDEBUG)
 
 OUTFILE ?= $(NAME)
-OBJS = stack.o util.o
+OBJS = stack.o util.o parse.o
 
 .PHONY: all debug clean install uninstall
 
