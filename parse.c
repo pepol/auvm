@@ -37,7 +37,7 @@
 int parse(vm_t *vm_status)
 {
 	/* Every opcode is made of 2 parts: OP_NUM (1B) and OP_ARG (1B) */
-	uint8_t op_num, op_arg;
+	uint8_t in_num, in_arg;
 	uint32_t objno, addr, tmp;
 	in_t func;
 	int ret;
@@ -56,7 +56,7 @@ int parse(vm_t *vm_status)
 			(const void *)&(vm_status->ctbl[objno].data[tmp]));
 		tmp += in_arg;
 	}
-	
+
 	/* Update IPs */
 	vm_status->cip = vm_status->nip;
 	vm_status->nip->addr = tmp;
