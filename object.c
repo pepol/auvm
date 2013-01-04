@@ -33,7 +33,7 @@
 
 /* System includes */
 #include <stdlib.h>
-
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -85,10 +85,12 @@ int obj_load(obj_t *o, char *fname)
 			break;
 		case OBJ_BIN_UEX :
 			/* Native executable format */
-			/* FIXME: implement
-			 * return parse_uex(fd, o);*/
+			/* FIXME: implement parse_uex(fd, o);*/
 			break;
+		case OBJ_UNKNOWN :
 		default :
+			fprintf(stderr, "E: Unknown object type for \'%s\'\n",
+					fname);
 			return 4;
 	}
 
