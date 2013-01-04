@@ -30,10 +30,11 @@
 /* Local includes */
 #include "auvm.h"
 #include "stack.h"
-#include "init.h"
+#include "object.h"
+#include "ins.h"
 
 /* System includes */
-
+#include <stdlib.h>
 
 vm_t *auvm_init(uint32_t ds_sz, uint32_t cs_sz,	int argc, char **argv)
 {

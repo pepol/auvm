@@ -1,8 +1,8 @@
-#ifndef _AUVM_H_
-#define _AUVM_H_
+#ifndef _OBJECT_H_
+#define _OBJECT_H_
 
 /*
- * auvm.h - main include file
+ * object.h - object definitions
  *
  * Copyright (c) 2013 Peter Polacik <polacik.p@gmail.com>
  *
@@ -31,51 +31,28 @@
 #endif
 
 /* Local includes */
-#include "stack.h"
-#include "object.h"
-#include "ins.h"
+#include "auvm.h"
 
 /* System includes */
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
-typedef struct _ip {
-	uint32_t addr;
-	uint32_t obj;
-} ip_t;
-
-/* From stack.h */
-typedef struct _ds ds_t;
-typedef struct _cs cs_t;
-
-/* From object.h */
-typedef struct _obj {
+/* Object structure */
+struct _obj {
 	char *filename;
 	uint8_t type;
 	uint32_t sz;
 	uint8_t *data;
-} obj_t;
+};
 
-/* VM status structure */
-typedef struct _vm {
-	/* instruction pointers */
-	ip_t cip;
-	ip_t nip;
-	/* stack pointers */
-	ds_t ds;
-	cs_t cs;
-	/* instruction table */
-	in_t *in_table;
-	/* object table */
-	uint8_t obj_count;
-	obj_t *ctbl;
-} vm_t;
+/* Functions */
+extern uint8_t obj_type(int fd);
+extern int obj_load(obj_t *o, char *fname);
+extern void obj_unload(obj_t *o);
 
-/* Instruction function type:
- *  first argument is vm status pointer
- *  second is opcode
- *  third is an argument
- */
-typedef int (*in_t)(vm_t *, uint8_t, uint8_t);
+/* Object types */
+#define OBJ_UNKNOWN 0
+#define OBJ_BIN_RAW 1
+#define OBJ_BIN_UEX 2
 
-#endif /* _SLVM_H_ */
+#endif /* _OBJECT_H_ */
