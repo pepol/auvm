@@ -55,11 +55,11 @@ typedef struct _obj {
 /* VM status structure */
 typedef struct _vm {
 	/* instruction pointers */
-	ip_t *cip;
-	ip_t *nip;
+	ip_t cip;
+	ip_t nip;
 	/* stack pointers */
-	ds_t *ds;
-	cs_t *cs;
+	ds_t ds;
+	cs_t cs;
 	/* instruction table */
 	in_t *in_table;
 	/* object table */

@@ -42,8 +42,8 @@ int parse(vm_t *vm_status)
 	in_t func;
 	int ret;
 
-	objno = vm_status->nip->obj;
-	addr = vm_status->nip->addr;
+	objno = vm_status->nip.obj;
+	addr = vm_status->nip.addr;
 	in_num = vm_status->ctbl[objno].data[addr];
 	in_arg = vm_status->ctbl[objno].data[addr + 1];
 
@@ -52,14 +52,14 @@ int parse(vm_t *vm_status)
 	/* Load-specific section */
 	if (in_num == IN_LOAD) {
 		/* in_arg == number of bytes to push into stack */
-		ret = ds_push(vm_status->ds, in_arg,
+		ret = ds_push(&(vm_status->ds), in_arg,
 			(const void *)&(vm_status->ctbl[objno].data[tmp]));
 		tmp += in_arg;
 	}
 
 	/* Update IPs */
 	vm_status->cip = vm_status->nip;
-	vm_status->nip->addr = tmp;
+	vm_status->nip.addr = tmp;
 
 	if (in_num != IN_LOAD) {
 		func = vm_status->in_table[in_num];
