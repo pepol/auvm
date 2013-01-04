@@ -80,6 +80,7 @@ vm_t *auvm_init(uint32_t ds_sz, uint32_t cs_sz,	int argc, char **argv)
 	 *  2. Iterate through objects and initialize them
 	 */
 
+	ret->obj_count = 0;
 	ret->ctbl = (obj_t *)malloc(sizeof(obj_t) * argc);
 	if (ret->ctbl == NULL) {
 		ds_destroy(&ret->ds);
@@ -104,6 +105,7 @@ vm_t *auvm_init(uint32_t ds_sz, uint32_t cs_sz,	int argc, char **argv)
 			free(ret);
 			return NULL;
 		}
+		ret->obj_count++;
 	}
 
 	return ret;

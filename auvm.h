@@ -49,6 +49,7 @@ typedef struct _cs cs_t;
 typedef struct _obj {
 	char *filename;
 	uint8_t type;
+	uint32_t sz;
 	uint8_t *data;
 } obj_t;
 
@@ -63,6 +64,7 @@ typedef struct _vm {
 	/* instruction table */
 	in_t *in_table;
 	/* object table */
+	uint8_t obj_count;
 	obj_t *ctbl;
 } vm_t;
 
