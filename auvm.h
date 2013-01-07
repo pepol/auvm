@@ -49,12 +49,7 @@ typedef struct _ds ds_t;
 typedef struct _cs cs_t;
 
 /* From object.h */
-typedef struct _obj {
-	char *filename;
-	uint8_t type;
-	uint32_t sz;
-	uint8_t *data;
-} obj_t;
+typedef struct _obj obj_t;
 
 /* VM status structure */
 typedef struct _vm {
