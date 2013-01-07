@@ -32,6 +32,8 @@
 
 /* Local includes */
 #include "stack.h"
+#include "object.h"
+#include "ins.h"
 
 /* System includes */
 #include <stdint.h>
@@ -46,23 +48,21 @@ typedef struct _ip {
 typedef struct _ds ds_t;
 typedef struct _cs cs_t;
 
-typedef struct _obj {
-	char *filename;
-	uint8_t type;
-	uint8_t *data;
-} obj_t;
+/* From object.h */
+typedef struct _obj obj_t;
 
 /* VM status structure */
 typedef struct _vm {
 	/* instruction pointers */
-	ip_t *cip;
-	ip_t *nip;
+	ip_t cip;
+	ip_t nip;
 	/* stack pointers */
-	ds_t *ds;
-	cs_t *cs;
+	ds_t ds;
+	cs_t cs;
 	/* instruction table */
 	in_t *in_table;
 	/* object table */
+	uint8_t obj_count;
 	obj_t *ctbl;
 } vm_t;
 

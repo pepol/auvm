@@ -1,5 +1,8 @@
+#ifndef _OBJECT_H_
+#define _OBJECT_H_
+
 /*
- * parse.c - Instruction parser
+ * object.h - object definitions
  *
  * Copyright (c) 2013 Peter Polacik <polacik.p@gmail.com>
  *
@@ -28,43 +31,28 @@
 #endif
 
 /* Local includes */
-#include "stack.h"
 #include "auvm.h"
 
 /* System includes */
-#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
 
-int parse(vm_t *vm_status)
-{
-	/* Every opcode is made of 2 parts: OP_NUM (1B) and OP_ARG (1B) */
-	uint8_t in_num, in_arg;
-	uint32_t objno, addr, tmp;
-	in_t func;
-	int ret;
+/* Object structure */
+struct _obj {
+	char *filename;
+	uint8_t type;
+	uint32_t sz;
+	uint8_t *data;
+};
 
-	objno = vm_status->nip.obj;
-	addr = vm_status->nip.addr;
-	in_num = vm_status->ctbl[objno].data[addr];
-	in_arg = vm_status->ctbl[objno].data[addr + 1];
+/* Functions */
+extern uint8_t obj_type(int fd);
+extern int obj_load(obj_t *o, char *fname);
+extern void obj_unload(obj_t *o);
 
-	tmp = addr + 2;
+/* Object types */
+#define OBJ_UNKNOWN 0
+#define OBJ_BIN_RAW 1
+#define OBJ_BIN_UEX 2
 
-	/* Load-specific section */
-	if (in_num == IN_LOAD) {
-		/* in_arg == number of bytes to push into stack */
-		ret = ds_push(&(vm_status->ds), in_arg,
-			(const void *)&(vm_status->ctbl[objno].data[tmp]));
-		tmp += in_arg;
-	}
-
-	/* Update IPs */
-	vm_status->cip = vm_status->nip;
-	vm_status->nip.addr = tmp;
-
-	if (in_num != IN_LOAD) {
-		func = vm_status->in_table[in_num];
-		ret = (*func)(vm_status, in_num, in_arg);
-	}
-
-	return ret;
-}
+#endif /* _OBJECT_H_ */
