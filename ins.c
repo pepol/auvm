@@ -890,14 +890,266 @@ int in_shr(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
+/* Branching */
+
 int in_jmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
-	/* TODO: Implement */
+	int ret = 0;
+
+	if (opcode == IN_CALL) || (opcode == IN_CALL_L)
+		/* save NIP */
+		ret += cs_push(&vm_status->cs, &vm_status->nip);
+
+	switch (opcode) {
+		/* Object-wise jumps / calls */
+		case IN_JMP :
+		case IN_CALL :
+			switch (arg) {
+				case JMP_REL :
+					/* Relative jump */
+					int32_t offset;
+					offset = *(int32_t *)
+						 ds_pop(&vm_status->ds,
+							sizeof(int32_t));
+					vm_status->nip.addr += offset;
+					break;
+				case JMP_ABS :
+					/* Absolute jump */
+					uint32_t addr;
+					addr = *(uint32_t *)
+						 ds_pop(&vm_status->ds,
+							sizeof(uint32_t));
+					vm_status->nip.addr = addr;
+					break;
+				default : ret++;
+			}
+			break;
+		/* Long jumps / calls (changing object) */
+		case IN_JMP_L :
+		case IN_CALL_L :
+			uint32_t obj, addr;
+			addr = *(uint32_t *)ds_pop(&vm_status->ds,
+						sizeof(uint32_t));
+			obj = *(uint32_t *)ds_pop(&vm_status->ds,
+						sizeof(uint32_t));
+			if (vm_status->obj_count <= obj)
+				/* Illegal object */
+				ret++;
+			else {
+				/* Update NIP */
+				vm_status->nip.addr = addr;
+				vm_status->nip.obj = obj;
+			}
+			break;
+		default : ret++;
+	}
+
+	return ret;
+}
+
+int in_ret(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+{
+	ip_t *tmp;
+
+	/* Argument contains number of levels to return from */
+	while (arg--) {
+		tmp = cs_pop(&vm_status->cs);
+	}
+	if (tmp == NULL)
+		return 1;
+
+	vm_status->nip.addr = tmp->addr;
+	vm_status->nip.obj = tmp->obj;
+
 	return 0;
 }
 
-int in_ret(vm_t *vm_status, uint8_t, opcode, uint8_t arg)
+/* Conditionals */
+
+int in_cmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
-	/* TODO: Implement */
+	uint8_t sz, type;
+	int ret = 0;
+	
+	type = arg >> 4;
+	sz = arg - (type << 4);
+	/* discard previous comparison results */
+	flags = (flags >> 2) << 2;
+
+	switch (type) {
+		case AUVMF_UINT :
+			switch (sz) {
+				case 1 :
+					uint8_t a, b;
+					a = *(uint8_t *)ds_pop(&vm_status->ds,
+							sizeof(uint8_t));
+					b = *(uint8_t *)ds_pop(&vm_status->ds,
+							sizeof(uint8_t));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				case 2 :
+					uint16_t a, b;
+					a = *(uint16_t*)ds_pop(&vm_status->ds,
+							sizeof(uint16_t));
+					b = *(uint16_t*)ds_pop(&vm_status->ds,
+							sizeof(uint16_t));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				case 4 :
+					uint32_t a, b;
+					a = *(uint32_t*)ds_pop(&vm_status->ds,
+							sizeof(uint32_t));
+					b = *(uint32_t*)ds_pop(&vm_status->ds,
+							sizeof(uint32_t));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				default : ret = 1;
+			}
+			break;
+		case AUVMF_SINT :
+			switch (sz) {
+				case 1 :
+					int8_t a, b;
+					a = *(int8_t *)ds_pop(&vm_status->ds,
+							sizeof(int8_t));
+					b = *(int8_t *)ds_pop(&vm_status->ds,
+							sizeof(int8_t));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				case 2 :
+					int16_t a, b;
+					a = *(int16_t*)ds_pop(&vm_status->ds,
+							sizeof(int16_t));
+					b = *(int16_t*)ds_pop(&vm_status->ds,
+							sizeof(int16_t));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				case 4 :
+					uint32_t a, b;
+					a = *(int32_t*)ds_pop(&vm_status->ds,
+							sizeof(int32_t));
+					b = *(int32_t*)ds_pop(&vm_status->ds,
+							sizeof(int32_t));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				default : ret = 1;
+			}
+			break;
+		case AUVMF_FLOAT :
+			switch (sz) {
+				case 0 :
+					unsigned float a, b;
+					a = *(unsigned float *)
+						ds_pop(&vm_status->ds,
+						sizeof(unsigned float));
+					b = *(unsigned float *)
+						ds_pop(&vm_status->ds,
+						sizeof(unsigned float));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				case 1 :
+					signed float a, b;
+					a = *(signed float *)
+						ds_pop(&vm_status->ds,
+						sizeof(signed float));
+					b = *(signed float *)
+						ds_pop(&vm_status->ds,
+						sizeof(signed float));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				default : ret = 1;
+			}
+			break;
+		case AUVMF_DOUBLE :
+			switch (sz) {
+				case 0 :
+					unsigned double a, b;
+					a = *(unsigned double *)
+						ds_pop(&vm_status->ds,
+						sizeof(unsigned double));
+					b = *(unsigned double *)
+						ds_pop(&vm_status->ds,
+						sizeof(unsigned double));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				case 1 :
+					signed double a, b;
+					a = *(signed double *)
+						ds_pop(&vm_status->ds,
+						sizeof(signed double));
+					b = *(signed double *)
+						ds_pop(&vm_status->ds,
+						sizeof(signed double));
+					vm_status->flags += (a < b) ?
+						FLAGS_COMP_LT : ((a > b) ?
+							FLAGS_COMP_GT : 0);
+					break;
+				default : ret = 1;
+			}
+			break;
+		default : ret = 1;
+	return ret;
+}
+
+int in_if(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
+{
+	uint8_t skip = 1;
+	
+	switch (opcode) {
+		case IN_IFEQ :
+			if (!((vm_status->flags & FLAGS_COMP_GT)
+				|| (vm_status->flags & FLAGS_COMP_LT)))
+				skip = 0;
+			break;
+		case IN_IFNEQ :
+			if ((vm_status->flags & FLAGS_COMP_GT)
+				|| (vm_status->flags & FLAGS_COMP_LT))
+				skip = 0;
+			break;
+		case IN_IFGT :
+			if (vm_status->flags & FLAGS_COMP_GT)
+				skip = 0;
+			break;
+		case IN_IFGE :
+			if (vm_status->flags & FLAGS_COMP_GT)
+				skip = 0;
+			else if (!(vm_status->flags & FLAGS_COMP_LT))
+				skip = 0;
+			break;
+		case IN_IFLT :
+			if (vm_status->flags & FLAGS_COMP_LT)
+				skip = 0;
+			break;
+		case IN_IFLE :
+			if (vm_status->flags & FLAGS_COMP_LT)
+				skip = 0;
+			else if (!(vm_status->flags & FLAGS_COMP_GT))
+				skip = 0;
+			break;
+		default : return 1;
+	}
+
+	/* If skip != 0, move nip to new position (+2) */
+	if (skip)
+		vm_status->nip.addr += 2;
+
 	return 0;
 }

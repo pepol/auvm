@@ -66,7 +66,13 @@ typedef struct _vm {
 	in_t *in_table;
 	/* object table */
 	obj_t *ctbl;
+	/* FLAGS register */
+	uint8_t flags;
 } vm_t;
+
+/* FLAGS definition */
+#define FLAGS_COMP_LT (1 << 0)
+#define FLAGS_COMP_GT (1 << 1)
 
 /* Instruction function type:
  *  first argument is vm status pointer
