@@ -65,10 +65,11 @@ int parse(vm_t *vm_status)
 		func = vm_status->in_table[in_num];
 		ret = (*func)(vm_status, in_num, in_arg);
 	}
-
-#ifdef DEBUG
-	ds_show(&vm_status->ds);
-#endif
+	
+	if (vm_status->flags & FLAGS_DBG) {
+		printf("INSTRUCTION: %.2x %.2x", in_num, in_arg);
+		ds_show(&vm_status->ds);
+	}
 
 	return ret;
 }

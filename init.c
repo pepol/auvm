@@ -109,9 +109,10 @@ vm_t *auvm_init(uint32_t ds_sz, uint32_t cs_sz,	int argc, char **argv)
 		ret->obj_count++;
 	}
 
+	ret->flags = 0;
 #ifdef DEBUG
 	/* Set flags to debug */
-	ret->flags = FLAGS_DBG;
+	ret->flags |= FLAGS_DBG;
 #endif
 
 	return ret;
