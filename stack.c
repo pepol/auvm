@@ -74,7 +74,8 @@ int ds_push(ds_t *s, uint32_t sz, const void *ptr)
 void *ds_pop(ds_t *s, uint32_t sz)
 {
 	void *ret;
-	if (((long)(s->st_count - sz)) >= 0) {
+	long comp = s->st_count - sz;
+	if (comp >= 0) {
 		ret = &(s->st_data[s->st_count - 1]);
 		s->st_count -= sz;
 		return ret;
@@ -84,9 +85,9 @@ void *ds_pop(ds_t *s, uint32_t sz)
 void *ds_getelem(ds_t *s, uint32_t sz, uint32_t pos)
 {
 	void *ret;
-	if ((((long)(s->st_count - sz)) >= 0)
-			&& (pos < s->st_count)
-			&& (((long)(pos - sz)) >= 0)) {
+	long comp = s->st_count - sz;
+	long poscomp = pos - sz;
+	if ((comp >= 0)	&& (pos < s->st_count) && (poscomp >= 0)) {
 		ret = &(s->st_data[pos]);
 		return ret;
 	} else return NULL;
@@ -140,7 +141,8 @@ int cs_push(cs_t *s, const ip_t *ptr)
 ip_t *cs_pop(cs_t *s)
 {
 	ip_t *ret;
-	if (((long)(s->st_count - 1)) >= 0) {
+	long comp = s->st_count - 1;
+	if (comp >= 0) {
 		ret = &(s->st_data[s->st_count - 1]);
 		s->st_count--;
 		return ret;
@@ -150,9 +152,9 @@ ip_t *cs_pop(cs_t *s)
 ip_t *cs_getelem(cs_t *s, uint32_t pos)
 {
 	ip_t *ret;
-	if ((((long)(s->st_count - 1)) >= 0)
-			&& (pos < s->st_count)
-			&& (((long)(pos - 1)) >= 0)) {
+	long comp = s->st_count - 1;
+	long poscomp = pos - 1;
+	if ((comp >= 0) && (pos < s->st_count) && (poscomp >= 0)) {
 		ret = &(s->st_data[pos]);
 		return ret;
 	} else return NULL;

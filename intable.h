@@ -30,10 +30,7 @@
 #endif
 
 /* Local includes */
-#include "auvm.h"
 #include "ins.h"
-
-/* System includes */
 
 extern in_t *in_table_init(void);
 extern void in_table_destroy(in_t *in_tbl);

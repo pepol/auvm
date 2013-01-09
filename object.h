@@ -30,12 +30,16 @@
 #include "config.h"
 #endif
 
-/* Local includes */
-#include "auvm.h"
-
 /* System includes */
 #include <stddef.h>
 #include <stdint.h>
+
+/* Address */
+struct _ip {
+	uint32_t addr;
+	uint32_t obj;
+};
+typedef struct _ip ip_t;
 
 /* Object structure */
 struct _obj {
@@ -44,6 +48,8 @@ struct _obj {
 	uint32_t sz;
 	uint8_t *data;
 };
+
+typedef struct _obj obj_t;
 
 /* Functions */
 extern uint8_t obj_type(int fd);

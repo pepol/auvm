@@ -31,7 +31,7 @@
 #endif
 
 /* Local includes */
-#include "auvm.h"
+#include "object.h"
 
 /* System includes */
 #include <stdint.h>
@@ -43,6 +43,7 @@ struct _ds {
 	uint32_t st_max;
 	uint8_t *st_data;
 };
+typedef struct _ds ds_t;
 
 /* Call stack */
 struct _cs {
@@ -50,6 +51,7 @@ struct _cs {
 	uint32_t st_max;
 	ip_t *st_data;
 };
+typedef struct _cs cs_t;
 
 /* Manipulation functions */
 extern int ds_init(ds_t *, uint32_t);

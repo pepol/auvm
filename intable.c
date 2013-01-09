@@ -37,9 +37,11 @@
 #include <stdio.h>
 
 
-int in_undefined((void)(vm_t *vm_status), uint8_t opcode, (void)(uint8_t arg))
+int in_undefined(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
-	fprintf(stderr, "E: Instruction %u is undefined\n", opcode);
+	if (vm_status == NULL)
+		return 1;
+	fprintf(stderr, "E: Instruction %x (%x) is undefined\n", opcode, arg);
 	return 0;
 }
 
@@ -55,78 +57,78 @@ in_t *in_table_init(void)
 
 	/* Initialize to 'undefined' values */
 	for (i = 0; i < 256; i++)
-		ret[i] = &in_undefined;
+		ret[i] = (in_t)&in_undefined;
 
 	/* Actual instructions */
-	ret[IN_NOP] = &in_nop;
-	ret[IN_END] = &in_end;
-	ret[IN_DEBUG] = &in_debug;
-	ret[IN_STDCALL] = &in_stdcall;
+	ret[IN_NOP] = (in_t)&in_nop;
+	ret[IN_END] = (in_t)&in_end;
+	ret[IN_DEBUG] = (in_t)&in_debug;
+	ret[IN_STDCALL] = (in_t)&in_stdcall;
 
 	ret[IN_LOAD] = NULL; /* special case handled by parse function */
 
-	/* one function can behave as more instructions -> opcode parameter */
-	ret[IN_DUP] = &in_stack;
-	ret[IN_GET] = &in_stack;
-	ret[IN_DROP] = &in_stack;
+	/* one function can behave as more (in_t)&instructions -> opcode parameter */
+	ret[IN_DUP] = (in_t)&in_stack;
+	ret[IN_GET] = (in_t)&in_stack;
+	ret[IN_DROP] = (in_t)&in_stack;
 
 	/* arithmetical and logical */
-	ret[IN_ADD_UI] = &in_add;
-	ret[IN_ADD_SI] = &in_add;
-	ret[IN_ADD_UF] = &in_add;
-	ret[IN_ADD_SF] = &in_add;
+	ret[IN_ADD_UI] = (in_t)&in_add;
+	ret[IN_ADD_SI] = (in_t)&in_add;
+	ret[IN_ADD_UF] = (in_t)&in_add;
+	ret[IN_ADD_SF] = (in_t)&in_add;
 
-	ret[IN_SUB_UI] = &in_sub;
-	ret[IN_SUB_SI] = &in_sub;
-	ret[IN_SUB_UF] = &in_sub;
-	ret[IN_SUB_SF] = &in_sub;
+	ret[IN_SUB_UI] = (in_t)&in_sub;
+	ret[IN_SUB_SI] = (in_t)&in_sub;
+	ret[IN_SUB_UF] = (in_t)&in_sub;
+	ret[IN_SUB_SF] = (in_t)&in_sub;
 
-	ret[IN_MUL_UI] = &in_mul;
-	ret[IN_MUL_SI] = &in_mul;
-	ret[IN_MUL_UF] = &in_mul;
-	ret[IN_MUL_SF] = &in_mul;
+	ret[IN_MUL_UI] = (in_t)&in_mul;
+	ret[IN_MUL_SI] = (in_t)&in_mul;
+	ret[IN_MUL_UF] = (in_t)&in_mul;
+	ret[IN_MUL_SF] = (in_t)&in_mul;
 
-	ret[IN_DIV_UI] = &in_div;
-	ret[IN_DIV_SI] = &in_div;
-	ret[IN_DIV_UF] = &in_div;
-	ret[IN_DIV_SF] = &in_div;
+	ret[IN_DIV_UI] = (in_t)&in_div;
+	ret[IN_DIV_SI] = (in_t)&in_div;
+	ret[IN_DIV_UF] = (in_t)&in_div;
+	ret[IN_DIV_SF] = (in_t)&in_div;
 
-	ret[IN_MOD_UI] = &in_mod;
-	ret[IN_MOD_SI] = &in_mod;
+	ret[IN_MOD_UI] = (in_t)&in_mod;
+	ret[IN_MOD_SI] = (in_t)&in_mod;
 
-	ret[IN_AND] = &in_and;
-	ret[IN_AND_L] = &in_and;
+	ret[IN_AND] = (in_t)&in_and;
+	ret[IN_AND_L] = (in_t)&in_and;
 
-	ret[IN_OR] = &in_or;
-	ret[IN_OR_L] = &in_or;
+	ret[IN_OR] = (in_t)&in_or;
+	ret[IN_OR_L] = (in_t)&in_or;
 
-	ret[IN_XOR] = &in_xor;
-	ret[IN_XOR_L] = &in_xor;
+	ret[IN_XOR] = (in_t)&in_xor;
+	ret[IN_XOR_L] = (in_t)&in_xor;
 
-	ret[IN_NOT] = &in_not;
-	ret[IN_NOT_L] = &in_not;
+	ret[IN_NOT] = (in_t)&in_not;
+	ret[IN_NOT_L] = (in_t)&in_not;
 
-	ret[IN_SHL] = &in_shl;
-	ret[IN_SHR] = &in_shr;
+	ret[IN_SHL] = (in_t)&in_shl;
+	ret[IN_SHR] = (in_t)&in_shr;
 
-	ret[IN_ROTL] = &in_shl;
-	ret[IN_ROTR] = &in_shr;
+	ret[IN_ROTL] = (in_t)&in_shl;
+	ret[IN_ROTR] = (in_t)&in_shr;
 
-	/* branching */
-	ret[IN_JMP] = &in_jmp;
-	ret[IN_JMP_L] = &in_jmp;
-	ret[IN_CALL] = &in_jmp;
-	ret[IN_CALL_L] = &in_jmp;
-	ret[IN_RET] = &in_ret;
+	/* branch(in_t)&ing */
+	ret[IN_JMP] = (in_t)&in_jmp;
+	ret[IN_JMP_L] = (in_t)&in_jmp;
+	ret[IN_CALL] = (in_t)&in_jmp;
+	ret[IN_CALL_L] = (in_t)&in_jmp;
+	ret[IN_RET] = (in_t)&in_ret;
 
 	/* conditionals */
-	ret[IN_CMP] = &in_cmp;
-	ret[IN_IFEQ] = &in_if;
-	ret[IN_IFNEQ] = &in_if;
-	ret[IN_IFGT] = &in_if;
-	ret[IN_IFGE] = &in_if;
-	ret[IN_IFLT] = &in_if;
-	ret[IN_IFLE] = &in_if;
+	ret[IN_CMP] = (in_t)&in_cmp;
+	ret[IN_IFEQ] = (in_t)&in_if;
+	ret[IN_IFNEQ] = (in_t)&in_if;
+	ret[IN_IFGT] = (in_t)&in_if;
+	ret[IN_IFGE] = (in_t)&in_if;
+	ret[IN_IFLT] = (in_t)&in_if;
+	ret[IN_IFLE] = (in_t)&in_if;
 
 	return ret;
 }

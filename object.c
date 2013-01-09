@@ -42,9 +42,11 @@
 /* Get object type 
  * FIXME: Determines *every* file as raw binary
  */
-uint8_t obj_type((void)(int fd))
+uint8_t obj_type(int fd)
 {
-	return OBJ_BIN_RAW;
+	if (fd)
+		return OBJ_BIN_RAW;
+	else return 0;
 }
 
 /* Load object */

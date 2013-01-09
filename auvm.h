@@ -30,27 +30,19 @@
 #include "config.h"
 #endif
 
-/* Local includes */
-#include "stack.h"
-#include "object.h"
-#include "intable.h"
-#include "ins.h"
-
 /* System includes */
 #include <stdint.h>
 #include <stddef.h>
 
-typedef struct _ip {
-	uint32_t addr;
-	uint32_t obj;
-} ip_t;
 
 /* From stack.h */
-typedef struct _ds ds_t;
-typedef struct _cs cs_t;
+#include "stack.h"
 
 /* From object.h */
-typedef struct _obj obj_t;
+#include "object.h"
+
+#include "ins.h"
+#include "intable.h"
 
 /* VM status structure */
 typedef struct _vm {
@@ -73,11 +65,38 @@ typedef struct _vm {
 #define FLAGS_COMP_LT (1 << 0)
 #define FLAGS_COMP_GT (1 << 1)
 
-/* Instruction function type:
- *  first argument is vm status pointer
- *  second is opcode
- *  third is an argument
- */
-typedef int (*in_t)(vm_t *, uint8_t, uint8_t);
+extern void *revmemcpy(void *, const void *, uint32_t);
+
+/* Flags - format */
+#define AUVMF_FLOAT 0x01
+#define AUVMF_DOUBLE 0x02
+#define AUVMF_UINT 0x03
+#define AUVMF_SINT 0x04
+
+/* Flags - jumps */
+#define JMP_REL 0x00
+#define JMP_ABS 0x01
+
+/* Instruction functions */
+extern int in_nop(vm_t *, uint8_t, uint8_t);
+extern int in_end(vm_t *, uint8_t, uint8_t);
+extern int in_debug(vm_t *, uint8_t, uint8_t);
+extern int in_stdcall(vm_t *, uint8_t, uint8_t);
+extern int in_stack(vm_t *, uint8_t, uint8_t);
+extern int in_add(vm_t *, uint8_t, uint8_t);
+extern int in_sub(vm_t *, uint8_t, uint8_t);
+extern int in_mul(vm_t *, uint8_t, uint8_t);
+extern int in_div(vm_t *, uint8_t, uint8_t);
+extern int in_mod(vm_t *, uint8_t, uint8_t);
+extern int in_and(vm_t *, uint8_t, uint8_t);
+extern int in_or(vm_t *, uint8_t, uint8_t);
+extern int in_xor(vm_t *, uint8_t, uint8_t);
+extern int in_not(vm_t *, uint8_t, uint8_t);
+extern int in_shl(vm_t *, uint8_t, uint8_t);
+extern int in_shr(vm_t *, uint8_t, uint8_t);
+extern int in_jmp(vm_t *, uint8_t, uint8_t);
+extern int in_ret(vm_t *, uint8_t, uint8_t);
+extern int in_cmp(vm_t *, uint8_t, uint8_t);
+extern int in_if(vm_t *, uint8_t, uint8_t);
 
 #endif /* _SLVM_H_ */

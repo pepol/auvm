@@ -30,11 +30,12 @@
 #include "config.h"
 #endif
 
-/* Local includes */
-#include "auvm.h"
-
-/* System includes */
-
+/* Instruction functions prototype:
+ *  first argument is vm status pointer
+ *  second is opcode
+ *  third is an argument
+ */
+typedef int (*in_t)(struct _vm *, uint8_t, uint8_t);
 
 /* INSTRUCTION LIST */
 
@@ -157,3 +158,5 @@
 #define IN_IFGE		0x54 /* ... if first arg >= second in last CMP */
 #define IN_IFLT		0x55 /* ... if first arg < second in last CMP */
 #define IN_IFLE		0x56 /* ... if first arg <= second in last CMP */
+
+#endif /* _INS_H_ */

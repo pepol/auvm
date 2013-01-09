@@ -32,30 +32,34 @@
 #include "ins.h"
 
 /* System includes */
+#include <string.h>
 
 
 /* INSTRUCTION IMPLEMENTATION */
 
-int in_nop((void)(vm_t *vm_status), (void)(uint8_t opcode), (void)(uint8_t arg))
+int in_nop(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
+	if (opcode != IN_NOP || vm_status == NULL)
+		return 1;
 	asm("nop");
 	return 0;
 }
 
-int in_end(vm_t *vm_status, (void)(uint8_t opcode), (void)(uint8_t arg))
+int in_end(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
+	if (opcode != IN_END)
 	auvm_exit(vm_status, 0);
 	/* will never return */
 	return 0;
 }
 
-int in_debug(vm_t *vm_status, (void)(uint8_t opcode), uint8_t arg)
+int in_debug(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	/* TODO: Implement */
 	return 0;
 }
 
-int in_stdcall(vm_t *vm_status, (void)(uint8_t opcode), uint8_t arg)
+int in_stdcall(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	/* TODO: Implement */
 	return 0;
@@ -79,7 +83,8 @@ int in_stack(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 			/* Get @ position */
 			get_pos = *(uint32_t *)ds_pop(&vm_status->ds,
 					sizeof(uint32_t));
-			memcpy(buf, ds_getelem(&vm_status->ds, arg, get_pos));
+			memcpy(buf, ds_getelem(&vm_status->ds, arg, get_pos),
+					arg);
 			ret = ds_push(&vm_status->ds, arg, buf);
 			break;
 		case IN_DROP :
@@ -99,39 +104,46 @@ int in_stack(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
+	uint8_t a1, b1, c1;
+	uint16_t a2, b2, c2;
+	uint32_t a4, b4, c4;
+	int8_t as1, bs1, cs1;
+	int16_t as2, bs2, cs2;
+	int32_t as4, bs4, cs4;
+	float fa, fb, fc;
+	double da, db, dc;
+	float fas, fbs, fcs;
+	double das, dbs, dcs;
 
 	switch (opcode) {
 		case IN_ADD_UI :
 			switch (arg) {
 				case 1 :
-					uint8_t a, b, c;
-					a = *(uint8_t *)ds_pop(&vm_status->ds,
+					a1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					b = *(uint8_t *)ds_pop(&vm_status->ds,
+					b1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					c = a + b;
+					c1 = a1 + b1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint8_t), &c);
+							sizeof(uint8_t), &c1);
 					break;
 				case 2 :
-					uint16_t a, b, c;
-					a = *(uint16_t *)ds_pop(&vm_status->ds,
+					a2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					b = *(uint16_t *)ds_pop(&vm_status->ds,
+					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c = a + b;
+					c2 = a2 + b2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint16_t), &c);
+							sizeof(uint16_t), &c2);
 					break;
 				case 4 :
-					uint32_t a, b, c;
-					a = *(uint32_t *)ds_pop(&vm_status->ds,
+					a4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					b = *(uint32_t *)ds_pop(&vm_status->ds,
+					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c = a + b;
+					c4 = a4 + b4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint32_t), &c);
+							sizeof(uint32_t), &c4);
 					break;
 				default : ret = 1;
 			}
@@ -139,34 +151,31 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_ADD_SI :
 			switch (arg) {
 				case 1 :
-					int8_t a, b, c;
-					a = *(int8_t *)ds_pop(&vm_status->ds,
+					as1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					b = *(int8_t *)ds_pop(&vm_status->ds,
+					bs1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					c = a + b;
+					cs1 = as1 + bs1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int8_t), &c);
+							sizeof(int8_t), &cs1);
 					break;
 				case 2 :
-					int16_t a, b, c;
-					a = *(int16_t *)ds_pop(&vm_status->ds,
+					as2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					b = *(int16_t *)ds_pop(&vm_status->ds,
+					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					c = a + b;
+					cs2 = as2 + bs2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int16_t), &c);
+							sizeof(int16_t), &cs2);
 					break;
 				case 4 :
-					int32_t a, b, c;
-					a = *(int32_t *)ds_pop(&vm_status->ds,
+					as4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					b = *(int32_t *)ds_pop(&vm_status->ds,
+					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					c = a + b;
+					cs4 = as4 + bs4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int32_t), &c);
+							sizeof(int32_t), &cs4);
 					break;
 				default : ret = 1;
 			}
@@ -174,28 +183,26 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_ADD_UF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					unsigned float a, b, c;
-					a = *(unsigned float *)
+					fa = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					b = *(unsigned float *)
+						sizeof(float));
+					fb = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					c = a + b;
+						sizeof(float));
+					fc = fa + fb;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned float), &c);
+						sizeof(float), &fc);
 					break;
 				case AUVMF_DOUBLE :
-					unsigned double a, b, c;
-					a = *(unsigned double *)
+					da = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					b = *(unsigned double *)
+						sizeof(double));
+					db = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					c = a + b;
+						sizeof(double));
+					dc = da + db;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned double), &c);
+						sizeof(double), &dc);
 					break;
 				default : ret = 1;
 			}
@@ -203,28 +210,26 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_ADD_SF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					signed float a, b, c;
-					a = *(signed float *)
+					fas = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					b = *(signed float *)
+						sizeof(float));
+					fbs = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					c = a + b;
+						sizeof(float));
+					fcs = fas + fbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed float), &c);
+						sizeof(float), &fcs);
 					break;
 				case AUVMF_DOUBLE :
-					signed double a, b, c;
-					a = *(signed double *)
+					das = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					b = *(signed double *)
+						sizeof(double));
+					dbs = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					c = a + b;
+						sizeof(double));
+					dcs = das + dbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed double), &c);
+						sizeof(double), &dcs);
 					break;
 				default : ret = 1;
 			}
@@ -238,39 +243,46 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
+	uint8_t a1, b1, c1;
+	uint16_t a2, b2, c2;
+	uint32_t a4, b4, c4;
+	int8_t as1, bs1, cs1;
+	int16_t as2, bs2, cs2;
+	int32_t as4, bs4, cs4;
+	float fa, fb, fc;
+	double da, db, dc;
+	float fas, fbs, fcs;
+	double das, dbs, dcs;
 
 	switch (opcode) {
 		case IN_SUB_UI :
 			switch (arg) {
 				case 1 :
-					uint8_t a, b, c;
-					a = *(uint8_t *)ds_pop(&vm_status->ds,
+					a1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					b = *(uint8_t *)ds_pop(&vm_status->ds,
+					b1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					c = a - b;
+					c1 = a1 - b1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint8_t), &c);
+							sizeof(uint8_t), &c1);
 					break;
 				case 2 :
-					uint16_t a, b, c;
-					a = *(uint16_t *)ds_pop(&vm_status->ds,
+					a2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					b = *(uint16_t *)ds_pop(&vm_status->ds,
+					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c = a - b;
+					c2 = a2 - b2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint16_t), &c);
+							sizeof(uint16_t), &c2);
 					break;
 				case 4 :
-					uint32_t a, b, c;
-					a = *(uint32_t *)ds_pop(&vm_status->ds,
+					a4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					b = *(uint32_t *)ds_pop(&vm_status->ds,
+					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c = a - b;
+					c4 = a4 - b4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint32_t), &c);
+							sizeof(uint32_t), &c4);
 					break;
 				default : ret = 1;
 			}
@@ -278,34 +290,31 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_SUB_SI :
 			switch (arg) {
 				case 1 :
-					int8_t a, b, c;
-					a = *(int8_t *)ds_pop(&vm_status->ds,
+					as1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					b = *(int8_t *)ds_pop(&vm_status->ds,
+					bs1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					c = a - b;
+					cs1 = as1 - bs1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int8_t), &c);
+							sizeof(int8_t), &cs1);
 					break;
 				case 2 :
-					int16_t a, b, c;
-					a = *(int16_t *)ds_pop(&vm_status->ds,
+					as2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					b = *(int16_t *)ds_pop(&vm_status->ds,
+					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					c = a - b;
+					cs2 = as2 - bs2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int16_t), &c);
+							sizeof(int16_t), &cs2);
 					break;
 				case 4 :
-					int32_t a, b, c;
-					a = *(int32_t *)ds_pop(&vm_status->ds,
+					as4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					b = *(int32_t *)ds_pop(&vm_status->ds,
+					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					c = a - b;
+					cs4 = as4 - bs4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int32_t), &c);
+							sizeof(int32_t), &cs4);
 					break;
 				default : ret = 1;
 			}
@@ -313,28 +322,26 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_SUB_UF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					unsigned float a, b, c;
-					a = *(unsigned float *)
+					fa = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					b = *(unsigned float *)
+						sizeof(float));
+					fb = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					c = a - b;
+						sizeof(float));
+					fc = fa - fb;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned float), &c);
+						sizeof(float), &fc);
 					break;
 				case AUVMF_DOUBLE :
-					unsigned double a, b, c;
-					a = *(unsigned double *)
+					da = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					b = *(unsigned double *)
+						sizeof(double));
+					db = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					c = a - b;
+						sizeof(double));
+					dc = da - db;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned double), &c);
+						sizeof(double), &dc);
 					break;
 				default : ret = 1;
 			}
@@ -342,28 +349,26 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_SUB_SF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					signed float a, b, c;
-					a = *(signed float *)
+					fas = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					b = *(signed float *)
+						sizeof(float));
+					fbs = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					c = a - b;
+						sizeof(float));
+					fcs = fas - fbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed float), &c);
+						sizeof(float), &fcs);
 					break;
 				case AUVMF_DOUBLE :
-					signed double a, b, c;
-					a = *(signed double *)
+					das = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					b = *(signed double *)
+						sizeof(double));
+					dbs = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					c = a - b;
+						sizeof(double));
+					dcs = das - dbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed double), &c);
+						sizeof(double), &dcs);
 					break;
 				default : ret = 1;
 			}
@@ -374,42 +379,50 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
+
 int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
+	uint8_t a1, b1, c1;
+	uint16_t a2, b2, c2;
+	uint32_t a4, b4, c4;
+	int8_t as1, bs1, cs1;
+	int16_t as2, bs2, cs2;
+	int32_t as4, bs4, cs4;
+	float fa, fb, fc;
+	double da, db, dc;
+	float fas, fbs, fcs;
+	double das, dbs, dcs;
 
 	switch (opcode) {
 		case IN_MUL_UI :
 			switch (arg) {
 				case 1 :
-					uint8_t a, b, c;
-					a = *(uint8_t *)ds_pop(&vm_status->ds,
+					a1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					b = *(uint8_t *)ds_pop(&vm_status->ds,
+					b1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					c = a * b;
+					c1 = a1 * b1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint8_t), &c);
+							sizeof(uint8_t), &c1);
 					break;
 				case 2 :
-					uint16_t a, b, c;
-					a = *(uint16_t *)ds_pop(&vm_status->ds,
+					a2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					b = *(uint16_t *)ds_pop(&vm_status->ds,
+					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c = a * b;
+					c2 = a2 * b2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint16_t), &c);
+							sizeof(uint16_t), &c2);
 					break;
 				case 4 :
-					uint32_t a, b, c;
-					a = *(uint32_t *)ds_pop(&vm_status->ds,
+					a4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					b = *(uint32_t *)ds_pop(&vm_status->ds,
+					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c = a * b;
+					c4 = a4 * b4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint32_t), &c);
+							sizeof(uint32_t), &c4);
 					break;
 				default : ret = 1;
 			}
@@ -417,34 +430,31 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_MUL_SI :
 			switch (arg) {
 				case 1 :
-					int8_t a, b, c;
-					a = *(int8_t *)ds_pop(&vm_status->ds,
+					as1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					b = *(int8_t *)ds_pop(&vm_status->ds,
+					bs1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					c = a * b;
+					cs1 = as1 * bs1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int8_t), &c);
+							sizeof(int8_t), &cs1);
 					break;
 				case 2 :
-					int16_t a, b, c;
-					a = *(int16_t *)ds_pop(&vm_status->ds,
+					as2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					b = *(int16_t *)ds_pop(&vm_status->ds,
+					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					c = a * b;
+					cs2 = as2 * bs2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int16_t), &c);
+							sizeof(int16_t), &cs2);
 					break;
 				case 4 :
-					int32_t a, b, c;
-					a = *(int32_t *)ds_pop(&vm_status->ds,
+					as4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					b = *(int32_t *)ds_pop(&vm_status->ds,
+					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					c = a * b;
+					cs4 = as4 * bs4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int32_t), &c);
+							sizeof(int32_t), &cs4);
 					break;
 				default : ret = 1;
 			}
@@ -452,28 +462,26 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_MUL_UF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					unsigned float a, b, c;
-					a = *(unsigned float *)
+					fa = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					b = *(unsigned float *)
+						sizeof(float));
+					fb = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					c = a * b;
+						sizeof(float));
+					fc = fa * fb;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned float), &c);
+						sizeof(float), &fc);
 					break;
 				case AUVMF_DOUBLE :
-					unsigned double a, b, c;
-					a = *(unsigned double *)
+					da = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					b = *(unsigned double *)
+						sizeof(double));
+					db = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					c = a * b;
+						sizeof(double));
+					dc = da * db;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned double), &c);
+						sizeof(double), &dc);
 					break;
 				default : ret = 1;
 			}
@@ -481,28 +489,26 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_MUL_SF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					signed float a, b, c;
-					a = *(signed float *)
+					fas = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					b = *(signed float *)
+						sizeof(float));
+					fbs = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					c = a * b;
+						sizeof(float));
+					fcs = fas * fbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed float), &c);
+						sizeof(float), &fcs);
 					break;
 				case AUVMF_DOUBLE :
-					signed double a, b, c;
-					a = *(signed double *)
+					das = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					b = *(signed double *)
+						sizeof(double));
+					dbs = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					c = a * b;
+						sizeof(double));
+					dcs = das * dbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed double), &c);
+						sizeof(double), &dcs);
 					break;
 				default : ret = 1;
 			}
@@ -513,43 +519,49 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
-
 int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
+	uint8_t a1, b1, c1;
+	uint16_t a2, b2, c2;
+	uint32_t a4, b4, c4;
+	int8_t as1, bs1, cs1;
+	int16_t as2, bs2, cs2;
+	int32_t as4, bs4, cs4;
+	float fa, fb, fc;
+	double da, db, dc;
+	float fas, fbs, fcs;
+	double das, dbs, dcs;
 
 	switch (opcode) {
 		case IN_DIV_UI :
 			switch (arg) {
 				case 1 :
-					uint8_t a, b, c;
-					a = *(uint8_t *)ds_pop(&vm_status->ds,
+					a1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					b = *(uint8_t *)ds_pop(&vm_status->ds,
+					b1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					c = a / b;
+					c1 = a1 / b1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint8_t), &c);
+							sizeof(uint8_t), &c1);
 					break;
 				case 2 :
-					uint16_t a, b, c;
-					a = *(uint16_t *)ds_pop(&vm_status->ds,
+					a2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					b = *(uint16_t *)ds_pop(&vm_status->ds,
+					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c = a / b;
+					c2 = a2 / b2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint16_t), &c);
+							sizeof(uint16_t), &c2);
 					break;
 				case 4 :
-					uint32_t a, b, c;
-					a = *(uint32_t *)ds_pop(&vm_status->ds,
+					a4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					b = *(uint32_t *)ds_pop(&vm_status->ds,
+					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c = a / b;
+					c4 = a4 / b4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint32_t), &c);
+							sizeof(uint32_t), &c4);
 					break;
 				default : ret = 1;
 			}
@@ -557,34 +569,31 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_DIV_SI :
 			switch (arg) {
 				case 1 :
-					int8_t a, b, c;
-					a = *(int8_t *)ds_pop(&vm_status->ds,
+					as1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					b = *(int8_t *)ds_pop(&vm_status->ds,
+					bs1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					c = a / b;
+					cs1 = as1 / bs1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int8_t), &c);
+							sizeof(int8_t), &cs1);
 					break;
 				case 2 :
-					int16_t a, b, c;
-					a = *(int16_t *)ds_pop(&vm_status->ds,
+					as2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					b = *(int16_t *)ds_pop(&vm_status->ds,
+					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					c = a / b;
+					cs2 = as2 / bs2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int16_t), &c);
+							sizeof(int16_t), &cs2);
 					break;
 				case 4 :
-					int32_t a, b, c;
-					a = *(int32_t *)ds_pop(&vm_status->ds,
+					as4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					b = *(int32_t *)ds_pop(&vm_status->ds,
+					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					c = a / b;
+					cs4 = as4 / bs4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int32_t), &c);
+							sizeof(int32_t), &cs4);
 					break;
 				default : ret = 1;
 			}
@@ -592,28 +601,26 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_DIV_UF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					unsigned float a, b, c;
-					a = *(unsigned float *)
+					fa = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					b = *(unsigned float *)
+						sizeof(float));
+					fb = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					c = a / b;
+						sizeof(float));
+					fc = fa / fb;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned float), &c);
+						sizeof(float), &fc);
 					break;
 				case AUVMF_DOUBLE :
-					unsigned double a, b, c;
-					a = *(unsigned double *)
+					da = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					b = *(unsigned double *)
+						sizeof(double));
+					db = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					c = a / b;
+						sizeof(double));
+					dc = da / db;
 					ret = ds_push(&vm_status->ds,
-						sizeof(unsigned double), &c);
+						sizeof(double), &dc);
 					break;
 				default : ret = 1;
 			}
@@ -621,28 +628,26 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_DIV_SF :
 			switch (arg) {
 				case AUVMF_FLOAT :
-					signed float a, b, c;
-					a = *(signed float *)
+					fas = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					b = *(signed float *)
+						sizeof(float));
+					fbs = *(float *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					c = a / b;
+						sizeof(float));
+					fcs = fas / fbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed float), &c);
+						sizeof(float), &fcs);
 					break;
 				case AUVMF_DOUBLE :
-					signed double a, b, c;
-					a = *(signed double *)
+					das = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					b = *(signed double *)
+						sizeof(double));
+					dbs = *(double *)
 						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					c = a / b;
+						sizeof(double));
+					dcs = das / dbs;
 					ret = ds_push(&vm_status->ds,
-						sizeof(signed double), &c);
+						sizeof(double), &dcs);
 					break;
 				default : ret = 1;
 			}
@@ -651,79 +656,79 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	}
 
 	return ret;
-} 
+}
 
 int in_mod(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
+	uint8_t a1, b1, c1;
+	uint16_t a2, b2, c2;
+	uint32_t a4, b4, c4;
+	int8_t as1, bs1, cs1;
+	int16_t as2, bs2, cs2;
+	int32_t as4, bs4, cs4;
 
 	switch (opcode) {
-		case IN_MOD_UI :
+		case IN_ADD_UI :
 			switch (arg) {
 				case 1 :
-					uint8_t a, b, c;
-					a = *(uint8_t *)ds_pop(&vm_status->ds,
+					a1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					b = *(uint8_t *)ds_pop(&vm_status->ds,
+					b1 = *(uint8_t *)ds_pop(&vm_status->ds,
 							sizeof(uint8_t));
-					c = a % b;
+					c1 = a1 % b1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint8_t), &c);
+							sizeof(uint8_t), &c1);
 					break;
 				case 2 :
-					uint16_t a, b, c;
-					a = *(uint16_t *)ds_pop(&vm_status->ds,
+					a2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					b = *(uint16_t *)ds_pop(&vm_status->ds,
+					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c = a % b;
+					c2 = a2 % b2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint16_t), &c);
+							sizeof(uint16_t), &c2);
 					break;
 				case 4 :
-					uint32_t a, b, c;
-					a = *(uint32_t *)ds_pop(&vm_status->ds,
+					a4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					b = *(uint32_t *)ds_pop(&vm_status->ds,
+					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c = a % b;
+					c4 = a4 % b4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(uint32_t), &c);
+							sizeof(uint32_t), &c4);
 					break;
 				default : ret = 1;
 			}
 			break;
-		case IN_MOD_SI :
+		case IN_ADD_SI :
 			switch (arg) {
 				case 1 :
-					int8_t a, b, c;
-					a = *(int8_t *)ds_pop(&vm_status->ds,
+					as1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					b = *(int8_t *)ds_pop(&vm_status->ds,
+					bs1 = *(int8_t *)ds_pop(&vm_status->ds,
 							sizeof(int8_t));
-					c = a % b;
+					cs1 = as1 % bs1;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int8_t), &c);
+							sizeof(int8_t), &cs1);
 					break;
 				case 2 :
-					int16_t a, b, c;
-					a = *(int16_t *)ds_pop(&vm_status->ds,
+					as2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					b = *(int16_t *)ds_pop(&vm_status->ds,
+					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					c = a % b;
+					cs2 = as2 % bs2;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int16_t), &c);
+							sizeof(int16_t), &cs2);
 					break;
 				case 4 :
-					int32_t a, b, c;
-					a = *(int32_t *)ds_pop(&vm_status->ds,
+					as4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					b = *(int32_t *)ds_pop(&vm_status->ds,
+					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					c = a % b;
+					cs4 = as4 % bs4;
 					ret = ds_push(&vm_status->ds,
-							sizeof(int32_t), &c);
+							sizeof(int32_t), &cs4);
 					break;
 				default : ret = 1;
 			}
@@ -732,15 +737,15 @@ int in_mod(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	}
 
 	return ret;
-} 
+}
 
-int in_and(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
+int in_and(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
 	uint8_t a, b, c;
 
 	switch (opcode) {
-		case IN_ADD :
+		case IN_AND :
 			a = *(uint8_t *)ds_pop(&vm_status->ds,
 						sizeof(uint8_t));
 			b = *(uint8_t *)ds_pop(&vm_status->ds,
@@ -748,7 +753,7 @@ int in_and(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
 			c = a & b;
 			ret = ds_push(&vm_status->ds, sizeof(uint8_t), &c);
 			break;
-		case IN_ADD_L :
+		case IN_AND_L :
 			a = *(uint8_t *)ds_pop(&vm_status->ds,
 						sizeof(uint8_t));
 			b = *(uint8_t *)ds_pop(&vm_status->ds,
@@ -762,7 +767,7 @@ int in_and(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
 	return ret;
 }
 
-int in_or(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
+int in_or(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
 	uint8_t a, b, c;
@@ -790,7 +795,7 @@ int in_or(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
 	return ret;
 }
 
-int in_xor(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
+int in_xor(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
 	uint8_t a, b, c;
@@ -818,7 +823,7 @@ int in_xor(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
 	return ret;
 }
 
-int in_not(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
+int in_not(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret;
 	uint8_t a, b;
@@ -895,8 +900,10 @@ int in_shr(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 int in_jmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	int ret = 0;
+	int32_t offset;
+	uint32_t addr, obj;
 
-	if (opcode == IN_CALL) || (opcode == IN_CALL_L)
+	if ((opcode == IN_CALL) || (opcode == IN_CALL_L))
 		/* save NIP */
 		ret += cs_push(&vm_status->cs, &vm_status->nip);
 
@@ -907,7 +914,6 @@ int in_jmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 			switch (arg) {
 				case JMP_REL :
 					/* Relative jump */
-					int32_t offset;
 					offset = *(int32_t *)
 						 ds_pop(&vm_status->ds,
 							sizeof(int32_t));
@@ -915,7 +921,6 @@ int in_jmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 					break;
 				case JMP_ABS :
 					/* Absolute jump */
-					uint32_t addr;
 					addr = *(uint32_t *)
 						 ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
@@ -927,7 +932,6 @@ int in_jmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		/* Long jumps / calls (changing object) */
 		case IN_JMP_L :
 		case IN_CALL_L :
-			uint32_t obj, addr;
 			addr = *(uint32_t *)ds_pop(&vm_status->ds,
 						sizeof(uint32_t));
 			obj = *(uint32_t *)ds_pop(&vm_status->ds,
@@ -968,148 +972,54 @@ int in_ret(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 
 int in_cmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
-	uint8_t sz, type;
 	int ret = 0;
+	uint8_t a, b;
+	int8_t as, bs;
+	float fa, fb;
+	double da, db;
 	
-	type = arg >> 4;
-	sz = arg - (type << 4);
 	/* discard previous comparison results */
-	flags = (flags >> 2) << 2;
+	vm_status->flags = (vm_status->flags >> 2) << 2;
 
-	switch (type) {
+	switch (arg) {
 		case AUVMF_UINT :
-			switch (sz) {
-				case 1 :
-					uint8_t a, b;
-					a = *(uint8_t *)ds_pop(&vm_status->ds,
-							sizeof(uint8_t));
-					b = *(uint8_t *)ds_pop(&vm_status->ds,
-							sizeof(uint8_t));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				case 2 :
-					uint16_t a, b;
-					a = *(uint16_t*)ds_pop(&vm_status->ds,
-							sizeof(uint16_t));
-					b = *(uint16_t*)ds_pop(&vm_status->ds,
-							sizeof(uint16_t));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				case 4 :
-					uint32_t a, b;
-					a = *(uint32_t*)ds_pop(&vm_status->ds,
-							sizeof(uint32_t));
-					b = *(uint32_t*)ds_pop(&vm_status->ds,
-							sizeof(uint32_t));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				default : ret = 1;
-			}
+			a = *(uint8_t *)ds_pop(&vm_status->ds,
+						sizeof(uint8_t));
+			b = *(uint8_t *)ds_pop(&vm_status->ds,
+						sizeof(uint8_t));
+			vm_status->flags += (a < b) ? FLAGS_COMP_LT : 
+					((a > b) ? FLAGS_COMP_GT : 0);
 			break;
 		case AUVMF_SINT :
-			switch (sz) {
-				case 1 :
-					int8_t a, b;
-					a = *(int8_t *)ds_pop(&vm_status->ds,
-							sizeof(int8_t));
-					b = *(int8_t *)ds_pop(&vm_status->ds,
-							sizeof(int8_t));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				case 2 :
-					int16_t a, b;
-					a = *(int16_t*)ds_pop(&vm_status->ds,
-							sizeof(int16_t));
-					b = *(int16_t*)ds_pop(&vm_status->ds,
-							sizeof(int16_t));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				case 4 :
-					uint32_t a, b;
-					a = *(int32_t*)ds_pop(&vm_status->ds,
-							sizeof(int32_t));
-					b = *(int32_t*)ds_pop(&vm_status->ds,
-							sizeof(int32_t));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				default : ret = 1;
-			}
+			as = *(int8_t *)ds_pop(&vm_status->ds,
+						sizeof(int8_t));
+			bs = *(int8_t *)ds_pop(&vm_status->ds,
+						sizeof(int8_t));
+			vm_status->flags += (as < bs) ? FLAGS_COMP_LT : 
+					((as > bs) ? FLAGS_COMP_GT : 0);
 			break;
 		case AUVMF_FLOAT :
-			switch (sz) {
-				case 0 :
-					unsigned float a, b;
-					a = *(unsigned float *)
-						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					b = *(unsigned float *)
-						ds_pop(&vm_status->ds,
-						sizeof(unsigned float));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				case 1 :
-					signed float a, b;
-					a = *(signed float *)
-						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					b = *(signed float *)
-						ds_pop(&vm_status->ds,
-						sizeof(signed float));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				default : ret = 1;
-			}
+			fa = *(float *)ds_pop(&vm_status->ds,
+						sizeof(float));
+			fb = *(float *)ds_pop(&vm_status->ds,
+						sizeof(float));
+			vm_status->flags += (fa < fb) ? FLAGS_COMP_LT : 
+					((fa > fb) ? FLAGS_COMP_GT : 0);
 			break;
 		case AUVMF_DOUBLE :
-			switch (sz) {
-				case 0 :
-					unsigned double a, b;
-					a = *(unsigned double *)
-						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					b = *(unsigned double *)
-						ds_pop(&vm_status->ds,
-						sizeof(unsigned double));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				case 1 :
-					signed double a, b;
-					a = *(signed double *)
-						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					b = *(signed double *)
-						ds_pop(&vm_status->ds,
-						sizeof(signed double));
-					vm_status->flags += (a < b) ?
-						FLAGS_COMP_LT : ((a > b) ?
-							FLAGS_COMP_GT : 0);
-					break;
-				default : ret = 1;
-			}
+			da = *(double *)ds_pop(&vm_status->ds,
+						sizeof(double));
+			db = *(double *)ds_pop(&vm_status->ds,
+						sizeof(double));
+			vm_status->flags += (da < db) ? FLAGS_COMP_LT : 
+					((da > db) ? FLAGS_COMP_GT : 0);
 			break;
 		default : ret = 1;
+	}
 	return ret;
 }
 
-int in_if(vm_t *vm_status, uint8_t opcode, (void)(uint8_t arg))
+int in_if(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	uint8_t skip = 1;
 	

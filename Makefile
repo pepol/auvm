@@ -40,11 +40,11 @@ LDFLAGS += $(LDEBUG)
 OUTFILE ?= $(NAME)
 OBJS = stack.o util.o parse.o init.o object.o intable.o ins.o
 
-.PHONY: all debug clean install uninstall
+.PHONY: all debug clean install uninstall objects
 
-all: $(OUTFILE) $(OBJS)
+all: $(OUTFILE) objects
 
-$(OUTFILE): $(OBJS)
+$(OUTFILE): objects
 	$(CC) -o $@ $(LDFLAGS) $(OBJS)
 
 .c.o:
@@ -66,3 +66,5 @@ install: $(OUTFILE)
 uninstall: $(OUTFILE)
 	rm -f $(BINDIR)/$(OUTFILE)
 	rm -rf $(DOCDIR)
+
+objects: $(OBJS)
