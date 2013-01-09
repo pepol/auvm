@@ -1,8 +1,7 @@
-#ifndef _AUVM_H_
-#define _AUVM_H_
-
+#ifndef _INTABLE_H_
+#define _INTABLE_H_
 /*
- * auvm.h - main include file
+ * intable.h - instruction table implementation
  *
  * Copyright (c) 2013 Peter Polacik <polacik.p@gmail.com>
  *
@@ -31,53 +30,12 @@
 #endif
 
 /* Local includes */
-#include "stack.h"
-#include "object.h"
-#include "intable.h"
+#include "auvm.h"
 #include "ins.h"
 
 /* System includes */
-#include <stdint.h>
-#include <stddef.h>
 
-typedef struct _ip {
-	uint32_t addr;
-	uint32_t obj;
-} ip_t;
+extern in_t *in_table_init(void);
+extern void in_table_destroy(in_t *in_tbl);
 
-/* From stack.h */
-typedef struct _ds ds_t;
-typedef struct _cs cs_t;
-
-/* From object.h */
-typedef struct _obj obj_t;
-
-/* VM status structure */
-typedef struct _vm {
-	/* instruction pointers */
-	ip_t cip;
-	ip_t nip;
-	/* stack pointers */
-	ds_t ds;
-	cs_t cs;
-	/* instruction table */
-	in_t *in_table;
-	/* object table */
-	uint8_t obj_count;
-	obj_t *ctbl;
-	/* FLAGS register */
-	uint8_t flags;
-} vm_t;
-
-/* FLAGS definition */
-#define FLAGS_COMP_LT (1 << 0)
-#define FLAGS_COMP_GT (1 << 1)
-
-/* Instruction function type:
- *  first argument is vm status pointer
- *  second is opcode
- *  third is an argument
- */
-typedef int (*in_t)(vm_t *, uint8_t, uint8_t);
-
-#endif /* _SLVM_H_ */
+#endif /* _INTABLE_H_ */
