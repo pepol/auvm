@@ -61,6 +61,7 @@ extern void *ds_pop(ds_t *, uint32_t);
 extern void *ds_getelem(ds_t *, uint32_t, uint32_t);
 extern uint32_t ds_size(ds_t *);
 extern uint32_t ds_limit(ds_t *);
+extern void ds_show(ds_t *);
 
 extern int cs_init(cs_t *, uint32_t);
 extern int cs_destroy(cs_t *);

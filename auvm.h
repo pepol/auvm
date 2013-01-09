@@ -64,6 +64,7 @@ typedef struct _vm {
 /* FLAGS definition */
 #define FLAGS_COMP_LT (1 << 0)
 #define FLAGS_COMP_GT (1 << 1)
+#define FLAGS_DBG (1 << 2)
 
 /* Flags - format */
 #define AUVMF_FLOAT 0x01
@@ -105,5 +106,8 @@ extern int parse(vm_t *);
 
 /* util.c */
 extern void *revmemcpy(void *, const void *, uint32_t);
+
+/* auvm.c */
+extern void auvm_exit(vm_t *, int);
 
 #endif /* _SLVM_H_ */

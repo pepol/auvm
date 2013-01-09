@@ -66,5 +66,9 @@ int parse(vm_t *vm_status)
 		ret = (*func)(vm_status, in_num, in_arg);
 	}
 
+#ifdef DEBUG
+	ds_show(&vm_status->ds);
+#endif
+
 	return ret;
 }

@@ -47,10 +47,10 @@ int in_nop(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 
 int in_end(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
-	if (opcode != IN_END)
-	auvm_exit(vm_status, 0);
+	if (opcode == IN_END)
+		auvm_exit(vm_status, 0);
 	/* will never return */
-	return 0;
+	return 1;
 }
 
 int in_debug(vm_t *vm_status, uint8_t opcode, uint8_t arg)

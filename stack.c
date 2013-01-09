@@ -103,6 +103,17 @@ uint32_t ds_limit(ds_t *s)
 	return s->st_max;
 }
 
+void ds_show(ds_t *s)
+{
+	int i;
+	printf("\n\nBEGIN DATA STACK DUMP\n");
+	for (i = 0; i < s->st_count; i++) {
+		if (i % 8 == 0)
+			printf("\n");
+		printf(" %.2x", s->st_data[i]);
+	}
+	printf("\nEND DATA STACK DUMP\n");
+}
 
 
 /* CS */
