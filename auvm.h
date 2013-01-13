@@ -44,6 +44,8 @@
 #include "ins.h"
 #include "intable.h"
 
+#include "auvmlib.h"
+
 /* VM status structure */
 typedef struct _vm {
 	/* instruction pointers */
@@ -54,6 +56,8 @@ typedef struct _vm {
 	cs_t cs;
 	/* instruction table */
 	in_t *in_table;
+	/* function table */
+	func_wrap_t *func_table;
 	/* object table */
 	uint8_t obj_count;
 	obj_t *ctbl;

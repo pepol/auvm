@@ -38,17 +38,22 @@ CFLAGS += -c -std=gnu99 -W -Wall -Wextra -Wno-unused-value $(CDEBUG)
 LDFLAGS += $(LDEBUG)
 
 OUTFILE ?= $(NAME)
-OBJS = stack.o util.o parse.o init.o object.o intable.o ins.o auvm.o
+OBJS = stack.o util.o parse.o init.o object.o intable.o ins.o auvm.o auvmlib.o
 
-.PHONY: all debug clean install uninstall objects
+AUVMLIB = lib/io.o
 
-all: $(OUTFILE) objects
+.PHONY: all debug clean install uninstall objects auvmlib
 
-$(OUTFILE): objects
+all: $(OUTFILE) objects auvmlib
+
+$(OUTFILE): objects auvmlib
 	$(CC) -o $@ $(LDFLAGS) $(OBJS)
 
 .c.o:
 	$(CC) $(CFLAGS) $<
+
+lib/io.o: lib/io.c
+	$(CC) -o $@ $(CFLAGS) $<
 
 debug:
 	make CDEBUG="-DDEBUG -g" LDEBUG="-g"
@@ -68,3 +73,5 @@ uninstall: $(OUTFILE)
 	rm -rf $(DOCDIR)
 
 objects: $(OBJS)
+
+auvmlib: $(AUVMLIB)
