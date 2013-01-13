@@ -30,6 +30,7 @@
 /* Local includes */
 #include "auvm.h"
 #include "ins.h"
+#include "auvmlib.h"
 
 /* System includes */
 #include <string.h>
@@ -64,8 +65,31 @@ int in_debug(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 
 int in_stdcall(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
-	/* TODO: Implement */
-	return 0;
+	/* Call wrapper-function from table, based on arg -> function's ID
+	 *  table[x] == function pointer for stdcall x
+	 *
+	 * Instruction:
+	 *  load arg1_sz arg1
+	 *  load arg2_sz arg2
+	 *  stdcall function_with_2_args
+	 *
+	 * Real world example:
+	 *  load 13 "Hello world!"0xa		; string
+	 *  load 4 0x0000000d			; length of string
+	 *  load 4 0x00000001			; output stream: 1 = stdout
+	 *  stdcall 0x04			; 4 = prints(stream, sz, str);
+	 */
+
+	func_wrap_t *func;
+	
+	if (opcode != IN_STDCALL)
+		return 1;
+
+	func = &library[arg];
+	if (func == NULL)
+		return 2;
+
+	return (*func)(vm_status);
 }
 
 /* Stack */
