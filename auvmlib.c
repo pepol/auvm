@@ -46,11 +46,11 @@ func_wrap_t *func_table_init(void)
 	for (i = 0; i < 256; i++)
 		ret[i] = NULL;
 
-	AULIB_ADD(ret, print_str, 1);
-	AULIB_ADD(ret, print_int, 2);
-	AULIB_ADD(ret, print_uint, 3);
-	AULIB_ADD(ret, print_float, 4);
-	AULIB_ADD(ret, print_double, 5);
+	ret[1] = &wrapper_print_str;
+	ret[2] = &wrapper_print_int;
+	ret[3] = &wrapper_print_uint;
+	ret[4] = &wrapper_print_float;
+	ret[5] = &wrapper_print_double;
 
 	return ret;
 }

@@ -56,7 +56,7 @@ int in_end(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 
 int in_debug(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
-	if (optarg)
+	if (arg)
 		vm_status->flags |= FLAGS_DBG;
 	else 
 		vm_status->flags &= ~FLAGS_DBG;

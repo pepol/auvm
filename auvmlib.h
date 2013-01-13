@@ -34,29 +34,11 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "auvm.h"
-
 /* Function wrapper prototype */
 typedef int (*func_wrap_t)(struct _vm *);
-
-/* Macro definitions for easier implementation */
-#define AULIB_BEGIN(X) int wrapper_##X##(vm_t *vm_status) \
-{
-#define AULIB_END }
-#define AULIB_ADD(T, F, N) T##[##N##] = &wrapper_##F
-#define AULIB_DECL(F) = extern wrapper_##F(vm_t *vm_status)
 
 /* Externs - auvmlib.c */
 extern func_wrap_t *func_table_init(void);
 extern void func_table_destroy(func_wrap_t *func_tbl);
-
-/* Externs - AUVM Library functions */
-
-/* io.c */
-AULIB_DECL(print_str);
-AULIB_DECL(print_int);
-AULIB_DECL(print_uint);
-AULIB_DECL(print_float);
-AULIB_DECL(print_double);
 
 #endif /* _AUVMLIB_H_ */

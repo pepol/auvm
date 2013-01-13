@@ -114,4 +114,13 @@ extern void *revmemcpy(void *, const void *, uint32_t);
 /* auvm.c */
 extern void auvm_exit(vm_t *, int);
 
-#endif /* _SLVM_H_ */
+/* Externs - AUVM Library functions */
+
+/* io.c */
+extern int wrapper_print_str(vm_t *vm_status);
+extern int wrapper_print_int(vm_t *vm_status);
+extern int wrapper_print_uint(vm_t *vm_status);
+extern int wrapper_print_float(vm_t *vm_status);
+extern int wrapper_print_double(vm_t *vm_status);
+
+#endif /* _AUVM_H_ */

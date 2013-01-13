@@ -30,7 +30,8 @@
 #include <string.h>
 #include <unistd.h>
 
-AULIB_BEGIN(print_str)
+int wrapper_print_str(vm_t *vm_status)
+{
 	int32_t fd;
 	uint32_t str_sz;
 	char *str;
@@ -47,9 +48,10 @@ AULIB_BEGIN(print_str)
 	str[str_sz] = '\0';
 	write((int) fd, str, str_sz);
 	return 0;
-AULIB_END
+}
 
-AULIB_BEGIN(print_int)
+int wrapper_print_int(vm_t *vm_status)
+{
 	int32_t fd;
 	int32_t num;
 	char buf[256] = "";
@@ -60,9 +62,10 @@ AULIB_BEGIN(print_int)
 	snprintf(buf, 255, "%ld", num);
 	write((int) fd, buf, strlen(buf));
 	return 0;
-AULIB_END
+}
 
-AULIB_BEGIN(print_uint)
+int wrapper_print_uint(vm_t *vm_status)
+{
 	int32_t fd;
 	uint32_t num;
 	char buf[256] = "";
@@ -73,9 +76,10 @@ AULIB_BEGIN(print_uint)
 	snprintf(buf, 255, "%lu", num);
 	write((int) fd, buf, strlen(buf));
 	return 0;
-AULIB_END
+}
 
-AULIB_BEGIN(print_float)
+int wrapper_print_float(vm_t *vm_status)
+{
 	int32_t fd;
 	int8_t prec;
 	float num;
@@ -88,9 +92,10 @@ AULIB_BEGIN(print_float)
 	snprintf(buf, 255, "%.*g", (int) prec, num);
 	write((int) fd, buf, strlen(buf));
 	return 0;
-AULIB_END
+}
 
-AULIB_BEGIN(print_double)
+int wrapper_print_double(vm_t *vm_status)
+{
 	int32_t fd;
 	int8_t prec;
 	double num;
@@ -103,4 +108,4 @@ AULIB_BEGIN(print_double)
 	snprintf(buf, 255, "%.*g", (int) prec, num);
 	write((int) fd, buf, strlen(buf));
 	return 0;
-AULIB_END
+}

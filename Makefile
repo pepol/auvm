@@ -47,7 +47,7 @@ AUVMLIB = lib/io.o
 all: $(OUTFILE) objects auvmlib
 
 $(OUTFILE): objects auvmlib
-	$(CC) -o $@ $(LDFLAGS) $(OBJS)
+	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(AUVMLIB)
 
 .c.o:
 	$(CC) $(CFLAGS) $<
@@ -60,6 +60,7 @@ debug:
 
 clean:
 	rm -f *.o
+	rm -f $(OBJS) $(AUVMLIB)
 	rm -f $(OUTFILE)
 	rm -f *.log *.debug
 
