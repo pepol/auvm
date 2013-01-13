@@ -44,6 +44,8 @@
 #include "ins.h"
 #include "intable.h"
 
+#include "auvmlib.h"
+
 /* VM status structure */
 typedef struct _vm {
 	/* instruction pointers */
@@ -54,6 +56,8 @@ typedef struct _vm {
 	cs_t cs;
 	/* instruction table */
 	in_t *in_table;
+	/* function table */
+	func_wrap_t *func_table;
 	/* object table */
 	uint8_t obj_count;
 	obj_t *ctbl;
@@ -110,4 +114,13 @@ extern void *revmemcpy(void *, const void *, uint32_t);
 /* auvm.c */
 extern void auvm_exit(vm_t *, int);
 
-#endif /* _SLVM_H_ */
+/* Externs - AUVM Library functions */
+
+/* io.c */
+extern int wrapper_print_str(vm_t *vm_status);
+extern int wrapper_print_int(vm_t *vm_status);
+extern int wrapper_print_uint(vm_t *vm_status);
+extern int wrapper_print_float(vm_t *vm_status);
+extern int wrapper_print_double(vm_t *vm_status);
+
+#endif /* _AUVM_H_ */

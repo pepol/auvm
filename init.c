@@ -73,6 +73,15 @@ vm_t *auvm_init(uint32_t ds_sz, uint32_t cs_sz,	int argc, char **argv)
 		return NULL;
 	}
 
+	/* Load AUVM Library */
+	ret->func_table = func_table_init();
+	if (ret->func_table == NULL) {
+		ds_destroy(&ret->ds);
+		cs_destroy(&ret->cs);
+		in_table_destroy(ret->in_table);
+		free(ret);
+	}
+
 	/* Load object table:
 	 *  argc contains count of (char *) elements in argv
 	 *  argv is array of strings containing objects
@@ -87,6 +96,7 @@ vm_t *auvm_init(uint32_t ds_sz, uint32_t cs_sz,	int argc, char **argv)
 		ds_destroy(&ret->ds);
 		cs_destroy(&ret->cs);
 		in_table_destroy(ret->in_table);
+		func_table_destroy(ret->func_table);
 		free(ret);
 		return NULL;
 	}
@@ -100,6 +110,7 @@ vm_t *auvm_init(uint32_t ds_sz, uint32_t cs_sz,	int argc, char **argv)
 			ds_destroy(&ret->ds);
 			cs_destroy(&ret->cs);
 			in_table_destroy(ret->in_table);
+			func_table_destroy(ret->func_table);
 			for (int j = 0; j < i; j++)
 				obj_unload(&(ret->ctbl[j]));
 			free(ret->ctbl);
