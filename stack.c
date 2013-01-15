@@ -76,7 +76,7 @@ void *ds_pop(ds_t *s, uint32_t sz)
 	void *ret;
 	long comp = s->st_count - sz;
 	if (comp >= 0) {
-		ret = &(s->st_data[s->st_count - 1]);
+		ret = &(s->st_data[s->st_count - sz]);
 		s->st_count -= sz;
 		return ret;
 	} else return NULL;
