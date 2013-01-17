@@ -59,7 +59,7 @@ int wrapper_print_int(vm_t *vm_status)
 	fd = *(int32_t *)ds_pop(&vm_status->ds, sizeof(int32_t));
 	num = *(int32_t *)ds_pop(&vm_status->ds, sizeof(int32_t));
 
-	snprintf(buf, 255, "%ld", num);
+	snprintf(buf, 255, "%d", num);
 	write((int) fd, buf, strlen(buf));
 	return 0;
 }
@@ -73,7 +73,7 @@ int wrapper_print_uint(vm_t *vm_status)
 	fd = *(int32_t *)ds_pop(&vm_status->ds, sizeof(int32_t));
 	num = *(uint32_t *)ds_pop(&vm_status->ds, sizeof(uint32_t));
 
-	snprintf(buf, 255, "%lu", num);
+	snprintf(buf, 255, "%u", num);
 	write((int) fd, buf, strlen(buf));
 	return 0;
 }

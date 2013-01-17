@@ -105,7 +105,7 @@ uint32_t ds_limit(ds_t *s)
 
 void ds_show(ds_t *s)
 {
-	int i;
+	unsigned int i;
 	printf("\n\nBEGIN DATA STACK DUMP\n");
 	for (i = 0; i < s->st_count; i++) {
 		if (i % 8 == 0)

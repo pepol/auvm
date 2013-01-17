@@ -32,6 +32,7 @@
 #include "auvmlib.h"
 
 /* System includes */
+#include <stdlib.h>
 
 func_wrap_t *func_table_init(void)
 {

@@ -34,8 +34,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "auvm.h"
+
 /* Function wrapper prototype */
-typedef int (*func_wrap_t)(struct _vm *);
+typedef int (*func_wrap_t)(vm_t *);
 
 /* Externs - auvmlib.c */
 extern func_wrap_t *func_table_init(void);

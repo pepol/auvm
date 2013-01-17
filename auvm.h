@@ -35,16 +35,20 @@
 #include <stddef.h>
 
 
+/* UNUSED parameter */
+#ifdef __GNUC__
+#define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#define UNUSED(x) UNUSED_ ## x
+#endif
+
+
+
 /* From stack.h */
 #include "stack.h"
 
 /* From object.h */
 #include "object.h"
-
-#include "ins.h"
-#include "intable.h"
-
-#include "auvmlib.h"
 
 /* VM status structure */
 typedef struct _vm {
@@ -55,15 +59,20 @@ typedef struct _vm {
 	ds_t ds;
 	cs_t cs;
 	/* instruction table */
-	in_t *in_table;
+	int (**in_table)(struct _vm *, uint8_t, uint8_t);
 	/* function table */
-	func_wrap_t *func_table;
+	int (**func_table)(struct _vm *);
 	/* object table */
 	uint8_t obj_count;
 	obj_t *ctbl;
 	/* FLAGS register */
 	uint8_t flags;
 } vm_t;
+
+#include "ins.h"
+#include "intable.h"
+
+#include "auvmlib.h"
 
 /* FLAGS definition */
 #define FLAGS_COMP_LT (1 << 0)

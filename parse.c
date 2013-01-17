@@ -33,6 +33,7 @@
 
 /* System includes */
 #include <stdlib.h>
+#include <stdio.h>
 
 int parse(vm_t *vm_status)
 {

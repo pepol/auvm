@@ -83,14 +83,14 @@ int main(int argc, char **argv)
 				usage(argv[0], 0, stdout);
 				break;
 			case 'd' :
-				sscanf(optarg, "%lu", &ds_size);
+				sscanf(optarg, "%u", &ds_size);
 #ifdef DEBUG
 				fprintf(stderr, "[DEBUG] ds_size = %lu\n",
 						ds_size);
 #endif
 				break;
 			case 'c' :
-				sscanf(optarg, "%lu", &cs_size);
+				sscanf(optarg, "%u", &cs_size);
 #ifdef DEBUG
 				fprintf(stderr, "[DEBUG] cs_size = %lu\n",
 						cs_size);

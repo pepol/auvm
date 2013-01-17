@@ -38,7 +38,7 @@
 
 /* INSTRUCTION IMPLEMENTATION */
 
-int in_nop(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_nop(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 {
 	if (opcode != IN_NOP || vm_status == NULL)
 		return 1;
@@ -46,7 +46,7 @@ int in_nop(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return 0;
 }
 
-int in_end(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_end(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 {
 	if (opcode == IN_END)
 		auvm_exit(vm_status, 0);
@@ -54,7 +54,7 @@ int in_end(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return 1;
 }
 
-int in_debug(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_debug(vm_t *vm_status, uint8_t UNUSED(opcode), uint8_t arg)
 {
 	if (arg)
 		vm_status->flags |= FLAGS_DBG;
@@ -766,7 +766,7 @@ int in_mod(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
-int in_and(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_and(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 {
 	int ret;
 	uint8_t a, b, c;
@@ -794,7 +794,7 @@ int in_and(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
-int in_or(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_or(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 {
 	int ret;
 	uint8_t a, b, c;
@@ -822,7 +822,7 @@ int in_or(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
-int in_xor(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_xor(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 {
 	int ret;
 	uint8_t a, b, c;
@@ -850,7 +850,7 @@ int in_xor(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
-int in_not(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_not(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 {
 	int ret;
 	uint8_t a, b;
@@ -889,7 +889,7 @@ int in_shl(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_ROTL :
 			a = *(uint8_t *)ds_pop(&vm_status->ds,
 						sizeof(uint8_t));
-			b = (a << arg) | (a >> sizeof(uint8_t) * 8 - arg);
+			b = (a << arg) | (a >> (sizeof(uint8_t) * 8 - arg));
 			ret = ds_push(&vm_status->ds, sizeof(uint8_t), &b);
 			break;
 		default : ret = 1;
@@ -913,7 +913,7 @@ int in_shr(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 		case IN_ROTR :
 			a = *(uint8_t *)ds_pop(&vm_status->ds,
 						sizeof(uint8_t));
-			b = (a >> arg) | (a << sizeof(uint8_t) * 8 - arg);
+			b = (a >> arg) | (a << (sizeof(uint8_t) * 8 - arg));
 			ret = ds_push(&vm_status->ds, sizeof(uint8_t), &b);
 			break;
 		default : ret = 1;
@@ -978,7 +978,7 @@ int in_jmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
-int in_ret(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_ret(vm_t *vm_status, uint8_t UNUSED(opcode), uint8_t arg)
 {
 	ip_t *tmp;
 
@@ -997,7 +997,7 @@ int in_ret(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 
 /* Conditionals */
 
-int in_cmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_cmp(vm_t *vm_status, uint8_t UNUSED(opcode), uint8_t arg)
 {
 	int ret = 0;
 	uint8_t a, b;
@@ -1046,7 +1046,7 @@ int in_cmp(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 	return ret;
 }
 
-int in_if(vm_t *vm_status, uint8_t opcode, uint8_t arg)
+int in_if(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 {
 	uint8_t skip = 1;
 	
