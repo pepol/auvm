@@ -34,6 +34,7 @@
 
 /* System includes */
 #include <string.h>
+#include <arpa/inet.h>
 
 
 /* INSTRUCTION IMPLEMENTATION */
@@ -159,7 +160,7 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint16_t));
 					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c2 = a2 + b2;
+					c2 = htons(a2 + b2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint16_t), &c2);
 					break;
@@ -168,7 +169,7 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint32_t));
 					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c4 = a4 + b4;
+					c4 = htonl(a4 + b4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint32_t), &c4);
 					break;
@@ -191,7 +192,7 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int16_t));
 					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					cs2 = as2 + bs2;
+					cs2 = (int16_t) htons(as2 + bs2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int16_t), &cs2);
 					break;
@@ -200,7 +201,7 @@ int in_add(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int32_t));
 					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					cs4 = as4 + bs4;
+					cs4 = (int32_t) htonl(as4 + bs4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int32_t), &cs4);
 					break;
@@ -298,7 +299,7 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint16_t));
 					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c2 = a2 - b2;
+					c2 = htons(a2 - b2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint16_t), &c2);
 					break;
@@ -307,7 +308,7 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint32_t));
 					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c4 = a4 - b4;
+					c4 = htonl(a4 - b4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint32_t), &c4);
 					break;
@@ -330,7 +331,7 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int16_t));
 					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					cs2 = as2 - bs2;
+					cs2 = (int16_t) htons(as2 - bs2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int16_t), &cs2);
 					break;
@@ -339,7 +340,7 @@ int in_sub(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int32_t));
 					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					cs4 = as4 - bs4;
+					cs4 = (int32_t) htonl(as4 - bs4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int32_t), &cs4);
 					break;
@@ -438,7 +439,7 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint16_t));
 					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c2 = a2 * b2;
+					c2 = htons(a2 * b2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint16_t), &c2);
 					break;
@@ -447,7 +448,7 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint32_t));
 					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c4 = a4 * b4;
+					c4 = htonl(a4 * b4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint32_t), &c4);
 					break;
@@ -470,7 +471,7 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int16_t));
 					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					cs2 = as2 * bs2;
+					cs2 = (int16_t) htons(as2 * bs2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int16_t), &cs2);
 					break;
@@ -479,7 +480,7 @@ int in_mul(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int32_t));
 					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					cs4 = as4 * bs4;
+					cs4 = (int32_t) htonl(as4 * bs4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int32_t), &cs4);
 					break;
@@ -577,7 +578,7 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint16_t));
 					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c2 = a2 / b2;
+					c2 = htons(a2 / b2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint16_t), &c2);
 					break;
@@ -586,7 +587,7 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint32_t));
 					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c4 = a4 / b4;
+					c4 = htonl(a4 / b4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint32_t), &c4);
 					break;
@@ -609,7 +610,7 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int16_t));
 					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					cs2 = as2 / bs2;
+					cs2 = (int16_t) htons(as2 / bs2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int16_t), &cs2);
 					break;
@@ -618,7 +619,7 @@ int in_div(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int32_t));
 					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					cs4 = as4 / bs4;
+					cs4 = (int32_t) htonl(as4 / bs4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int32_t), &cs4);
 					break;
@@ -712,7 +713,7 @@ int in_mod(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint16_t));
 					b2 = *(uint16_t *)ds_pop(&vm_status->ds,
 							sizeof(uint16_t));
-					c2 = a2 % b2;
+					c2 = htons(a2 % b2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint16_t), &c2);
 					break;
@@ -721,7 +722,7 @@ int in_mod(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(uint32_t));
 					b4 = *(uint32_t *)ds_pop(&vm_status->ds,
 							sizeof(uint32_t));
-					c4 = a4 % b4;
+					c4 = htonl(a4 % b4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(uint32_t), &c4);
 					break;
@@ -744,7 +745,7 @@ int in_mod(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int16_t));
 					bs2 = *(int16_t *)ds_pop(&vm_status->ds,
 							sizeof(int16_t));
-					cs2 = as2 % bs2;
+					cs2 = (int16_t) htons(as2 % bs2);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int16_t), &cs2);
 					break;
@@ -753,7 +754,7 @@ int in_mod(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 							sizeof(int32_t));
 					bs4 = *(int32_t *)ds_pop(&vm_status->ds,
 							sizeof(int32_t));
-					cs4 = as4 % bs4;
+					cs4 = (int32_t) htonl(as4 % bs4);
 					ret = ds_push(&vm_status->ds,
 							sizeof(int32_t), &cs4);
 					break;
