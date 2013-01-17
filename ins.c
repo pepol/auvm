@@ -46,10 +46,10 @@ int in_nop(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
 	return 0;
 }
 
-int in_end(vm_t *vm_status, uint8_t opcode, uint8_t UNUSED(arg))
+int in_end(vm_t *vm_status, uint8_t opcode, uint8_t arg)
 {
 	if (opcode == IN_END)
-		auvm_exit(vm_status, 0);
+		auvm_exit(vm_status, arg);
 	/* will never return */
 	return 1;
 }
