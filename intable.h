@@ -32,6 +32,8 @@
 /* Local includes */
 #include "ins.h"
 
+typedef int (*in_t)(vm_t *, uint8_t, uint8_t);
+
 extern in_t *in_table_init(void);
 extern void in_table_destroy(in_t *in_tbl);
 

@@ -32,13 +32,6 @@
 
 #include "auvm.h"
 
-/* Instruction functions prototype:
- *  first argument is vm status pointer
- *  second is opcode
- *  third is an argument
- */
-typedef int (*in_t)(vm_t *, uint8_t, uint8_t);
-
 /* INSTRUCTION LIST */
 
 /* General Instructions 
