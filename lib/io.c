@@ -42,7 +42,7 @@ int wrapper_print_str(vm_t *vm_status)
 	str = (char *)malloc(sizeof(char) * (str_sz + 1));
 	if (str == NULL)
 		return 1;
-	memcpy(str, (const char *)ds_pop(&vm_status->ds, 
+	revmemcpy(str + str_sz, (const char *)ds_pop(&vm_status->ds,
 				sizeof(char) * (str_sz)), str_sz);
 
 	str[str_sz] = '\0';

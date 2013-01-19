@@ -85,14 +85,14 @@ int main(int argc, char **argv)
 			case 'd' :
 				sscanf(optarg, "%u", &ds_size);
 #ifdef DEBUG
-				fprintf(stderr, "[DEBUG] ds_size = %lu\n",
+				fprintf(stderr, "[DEBUG] ds_size = %u\n",
 						ds_size);
 #endif
 				break;
 			case 'c' :
 				sscanf(optarg, "%u", &cs_size);
 #ifdef DEBUG
-				fprintf(stderr, "[DEBUG] cs_size = %lu\n",
+				fprintf(stderr, "[DEBUG] cs_size = %u\n",
 						cs_size);
 #endif
 				break;
