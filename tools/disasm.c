@@ -69,7 +69,7 @@ int disassemble(char *fname, char **mnem_tbl, char **fname_tbl)
 		read(fd, &oparg, 1);
 		/* data == opcode */
 		if (opcode != IN_STDCALL)
-			printf("%s %#u", mnem_tbl[opcode], oparg);
+			printf("%s %u", mnem_tbl[opcode], oparg);
 		else if (opcode == IN_STDCALL)
 			printf("%s %s", mnem_tbl[opcode], fname_tbl[oparg]);
 		if (opcode == IN_LOAD) {
